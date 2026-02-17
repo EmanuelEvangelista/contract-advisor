@@ -1,0 +1,110 @@
+[
+  {
+    "_id": "1",
+    "owner": "1",
+    "contractName": "Parcelary Sharecropping - Sector A1",
+    "contractType": "Parcelary",
+    "contractor_details": {
+      "name": "Juan Gomez",
+      "email": "juan@gmail.com",
+      "phone": "555444666"
+    },
+    "contractee_details": {
+      "name": "Establecimiento Las Marias",
+      "email": "contacto@lasmarias.com",
+      "phone": "555888999"
+    },
+    "assignedEmployee": {
+      "employeeId": "emp_101",
+      "name": "Carlos Martinez",
+      "role": "Senior Accountant"
+    },
+    "startDate": "2025-05-01T00:00:00.000Z",
+    "expiryDate": "2028-05-01T00:00:00.000Z",
+    "status": "Active",
+    "paymentMethod": "In-Kind",
+    "paymentDetails": {
+      "commodity": "Soybean",
+      "quantity": 18,
+      "unit": "Quintals (qq)",
+      "frequency": "Per Hectare/Year"
+    },
+    "agroDetails": {
+      "area": "150 Hectares",
+      "location": "Plot VII - Pergamino",
+      "cropType": "Soybean"
+    },
+    "pdfUrl": "https://storage.contractadvisor.com/v1/files/contract_001_signed.pdf"
+  },
+  {
+    "_id": "2",
+    "owner": "2",
+    "contractName": "Corn Production Parcel - North Wing",
+    "contractType": "Parcelary",
+    "contractor_details": {
+      "name": "Juan Gomez",
+      "email": "juan@gmail.com",
+      "phone": "555444666"
+    },
+    "contractee_details": {
+      "name": "Agropecuaria del Norte",
+      "email": "admin@agronorte.com",
+      "phone": "555111222"
+    },
+    "assignedEmployee": {
+      "employeeId": "emp_102",
+      "name": "Lucia Fernandez",
+      "role": "Junior Assistant"
+    },
+    "startDate": "2025-09-01T00:00:00.000Z",
+    "expiryDate": "2026-09-01T00:00:00.000Z",
+    "status": "Active",
+    "paymentMethod": "In-Kind",
+    "paymentDetails": {
+      "commodity": "Corn",
+      "quantity": 12,
+      "unit": "Quintals (qq)",
+      "frequency": "Per Hectare/Year"
+    },
+    "agroDetails": {
+      "area": "200 Hectares",
+      "parcelId": "ZONE-B-44"
+    },
+    "pdfUrl": null
+  },
+  {
+    "_id": "3",
+    "owner": "3",
+    "contractName": "Machinery Leasing - JD 7J",
+    "contractType": "Leasing",
+    "contractor_details": {
+      "name": "Juan Gomez",
+      "email": "juan@gmail.com",
+      "phone": "555444666"
+    },
+    "contractee_details": {
+      "name": "Maquinarias Don Bosco",
+      "email": "rentals@donbosco.com",
+      "phone": "555000333"
+    },
+    "assignedEmployee": {
+      "employeeId": "emp_101",
+      "name": "Carlos Martinez",
+      "role": "Senior Accountant"
+    },
+    "startDate": "2026-03-01T00:00:00.000Z",
+    "expiryDate": "2027-03-01T00:00:00.000Z",
+    "status": "Active",
+    "paymentMethod": "Cash",
+    "paymentDetails": {
+      "currency": "USD",
+      "amount": 1200.0,
+      "frequency": "Monthly"
+    },
+    "agroDetails": {
+      "equipmentModel": "7J Series",
+      "insuranceIncluded": true
+    },
+    "pdfUrl": "https://storage.contractadvisor.com/v1/files/leasing_jd7j_final.pdf"
+  }
+]
