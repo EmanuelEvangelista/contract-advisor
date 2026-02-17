@@ -1,5 +1,5 @@
 // components/ContractTable.tsx
-import ContractRow from "./ContractRow";
+import ContractRow from "@/components/ContractRow";
 
 const ContractTable = ({ contracts }: { contracts: any[] }) => {
   return (

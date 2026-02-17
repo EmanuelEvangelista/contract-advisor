@@ -1,5 +1,5 @@
 // components/StatsGrid.tsx
-import StatCard from "./StatCard";
+import StatCard from "@/components/StateCard";
 
 interface Contract {
   status: string;
