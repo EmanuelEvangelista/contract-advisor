@@ -12,13 +12,13 @@ const Footer = () => {
           <div className="flex items-center gap-3">
             <Image src={logo} alt="Logo" className="h-9 w-auto" />
             <span className="text-lg font-semibold text-slate-800">
-              Nestrly
+              ContractAdvisor
             </span>
           </div>
 
           <div className="text-center md:text-right">
             <p className="text-sm text-slate-500">
-              © {currentYear} Nestrly. Designed for modern living.
+              © {currentYear} ContractAdvisor.
             </p>
           </div>
         </div>
