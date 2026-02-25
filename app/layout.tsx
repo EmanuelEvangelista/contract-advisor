@@ -49,7 +49,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     <html lang="en">
       <body>
         <NavBar />
-        <main>{children}</main>
+        <main className="pt-20">{children}</main>
         <Footer />
         {/* <ToastContainer /> */}
       </body>

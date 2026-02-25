@@ -1,7 +1,7 @@
 import React from "react";
 
-const ContractAppPage = () => {
+const ContractAddPage = () => {
   return <div>Add contract</div>;
 };
 
-export default ContractAppPage;
+export default ContractAddPage;
