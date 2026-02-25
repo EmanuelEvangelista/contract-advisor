@@ -1,6 +1,5 @@
 [
   {
-    "_id": "1",
     "owner": "1",
     "contractName": "Parcelary Sharecropping - Sector A1",
     "contractType": "Parcelary",
@@ -37,7 +36,6 @@
     "pdfUrl": "https://storage.contractadvisor.com/v1/files/contract_001_signed.pdf"
   },
   {
-    "_id": "2",
     "owner": "2",
     "contractName": "Corn Production Parcel - North Wing",
     "contractType": "Parcelary",
@@ -73,7 +71,6 @@
     "pdfUrl": null
   },
   {
-    "_id": "3",
     "owner": "3",
     "contractName": "Machinery Leasing - JD 7J",
     "contractType": "Leasing",
@@ -108,7 +105,6 @@
     "pdfUrl": "https://storage.contractadvisor.com/v1/files/leasing_jd7j_final.pdf"
   },
   {
-    "_id": "4",
     "owner": "4",
     "contractName": "Wheat Harvest - South Plot",
     "contractType": "Harvesting",
@@ -144,7 +140,6 @@
     "pdfUrl": null
   },
   {
-    "_id": "5",
     "owner": "5",
     "contractName": "Logistics & Transport - Q3",
     "contractType": "Service",
@@ -179,7 +174,6 @@
     "pdfUrl": "https://storage.contractadvisor.com/v1/files/logistics_q3_draft.pdf"
   },
   {
-    "_id": "6",
     "owner": "6",
     "contractName": "Grazing Lease - Sector B",
     "contractType": "Leasing",
@@ -216,7 +210,6 @@
     "pdfUrl": null
   },
   {
-    "_id": "7",
     "owner": "7",
     "contractName": "Silo Storage - Facility 4",
     "contractType": "Storage",

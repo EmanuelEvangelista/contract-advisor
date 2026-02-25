@@ -2,7 +2,7 @@
 import { FaFilePdf, FaExternalLinkAlt } from "react-icons/fa";
 import Link from "next/link";
 
-const ContractRow = ({ contract }: { contract: any }) => {
+const ContractInfo = ({ contract }: { contract: any }) => {
   // Función para determinar el estilo del badge
   const getStatusStyles = (status: string) => {
     switch (status) {
@@ -65,4 +65,4 @@ const ContractRow = ({ contract }: { contract: any }) => {
   );
 };
 
-export default ContractRow;
+export default ContractInfo;
