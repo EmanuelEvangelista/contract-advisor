@@ -1,31 +1,55 @@
 import React from "react";
-import { NextPage } from "next";
-import { FaExclamationTriangle } from "react-icons/fa";
+import { FaChevronLeft, FaHome } from "react-icons/fa";
 import Link from "next/link";
 
 const NotFoundPage = () => {
   return (
-    <section className="bg-blue-50 min-h-screen flex-grow">
-      <div className="container m-auto max-w-2xl py-24">
-        <div className="bg-white px-6 py-24 mb-4 shadow-md rounded-md border m-4 md:m-0">
-          <div className="flex justify-center">
-            <FaExclamationTriangle className="fa-5x text-8xl text-yellow-400" />
-          </div>
-          <div className="text-center">
-            <h1 className="text-3xl font-bold mt-4 mb-2">Page Not Found</h1>
-            <p className="text-gray-500 text-xl mb-10">
-              The page you are looking for does not exist.
-            </p>
-            <Link
-              href="/"
-              className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-4 px-6 rounded"
-            >
-              Go Home
-            </Link>
-          </div>
+    <section className="bg-slate-50 min-h-screen flex items-center justify-center p-6">
+      <div className="max-w-md w-full text-center">
+        {/* Visual 404 Element */}
+        <div className="mb-4">
+          <h1 className="text-[120px] font-black text-slate-200 leading-none">
+            404
+          </h1>
+          <div className="h-1.5 w-16 bg-blue-600 mx-auto rounded-full -mt-4"></div>
+        </div>
+
+        {/* Error Text */}
+        <h2 className="text-3xl font-extrabold text-slate-800 mb-4">
+          Contract Not Found
+        </h2>
+        <p className="text-slate-500 text-lg mb-10 leading-relaxed">
+          The page or document you are looking for doesn't exist or has been
+          moved to another department.
+        </p>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col gap-4">
+          <Link
+            href="/"
+            className="flex items-center justify-center gap-3 bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-xl shadow-slate-200"
+          >
+            <FaHome size={18} /> Back to Home
+          </Link>
+
+          <Link
+            href="/contracts"
+            className="flex items-center justify-center gap-2 text-blue-600 hover:text-blue-700 font-bold py-2 transition-colors"
+          >
+            <FaChevronLeft size={14} /> View All Contracts
+          </Link>
+        </div>
+
+        {/* Support Link */}
+        <div className="mt-16 pt-8 border-t border-slate-200">
+          <p className="text-slate-400 text-sm">
+            Need assistance?{" "}
+            <span className="text-blue-600 cursor-pointer hover:underline font-medium">
+              Contact Support
+            </span>
+          </p>
         </div>
       </div>
-      <div className="flex-grow"></div>
     </section>
   );
 };
