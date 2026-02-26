@@ -1,7 +1,7 @@
 import ContractInfo from "@/components/ContractInfo";
 import contractsData from "@/contracts.json";
 
-const HomeContracts = () => {
+const UserPanel = () => {
   // Manejamos el posible error de .map asegurando que sea un array
   const data = Array.isArray(contractsData)
     ? contractsData
@@ -37,4 +37,4 @@ const HomeContracts = () => {
   );
 };
 
-export default HomeContracts;
+export default UserPanel;
