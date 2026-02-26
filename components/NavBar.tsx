@@ -60,7 +60,7 @@ const Navbar = () => {
   // }, [pathname]);
 
   return (
-    <nav className="bg-gradient-to-r from-indigo-500 via-indigo-400 to-indigo-500 border-b border-indigo-300/50 fixed top-0 left-0 w-full z-50 backdrop-blur-md shadow-lg shadow-indigo-500/20">
+    <nav className="bg-white fixed top-0 left-0 w-full z-50 backdrop-blur-md shadow-lg shadow-indigo-500/20">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="relative flex h-20 items-center">
           {/* Mobile button */}
@@ -87,7 +87,7 @@ const Navbar = () => {
                 alt="ContractAdviser"
                 priority
               />
-              <span className="text-white text-2xl font-semibold tracking-tight">
+              <span className="text-gray-400 text-2xl font-semibold tracking-tight">
                 Contract<span className="text-indigo-900">Advisor</span>
               </span>
             </Link>
@@ -103,6 +103,15 @@ const Navbar = () => {
                 } text-base font-medium transition-all duration-200 hover:text-indigo-900`}
               >
                 Home
+              </Link>
+
+              <Link
+                href="/panel"
+                className={`${
+                  pathname === "/panel" ? "text-indigo-900" : "text-slate-300"
+                } text-base font-medium transition-all duration-200 hover:text-indigo-900`}
+              >
+                My Panel
               </Link>
 
               <Link

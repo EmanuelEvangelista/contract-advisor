@@ -1,16 +1,48 @@
+"use client";
 import ContractCard from "./ContractCard";
 import { FaSearch } from "react-icons/fa";
-import contractsData from "@/contracts.json";
+import { useState, useEffect } from "react";
+import Spinner from "@/components/Spinner";
+import { ContractType } from "@/models/Contract";
+import Pagination from "@/components/Pagination";
 
 const Contracts = () => {
-  // 1. Si es array, lo usa.
-  // 2. Si es un módulo con .default, lo extrae.
-  // 3. Si falla todo, devuelve un array vacío para que no rompa el .map
-  const contracts = Array.isArray(contractsData)
-    ? contractsData
-    : (contractsData as any).default || [];
+  const [contracts, setContracts] = useState<ContractType[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(6);
+  const [totalItems, setTotalItems] = useState<number>(0);
 
-  return (
+  useEffect(() => {
+    const getContracts = async () => {
+      try {
+        const res = await fetch(
+          `/api/contracts?page=${page}&pageSize=${pageSize}`,
+        );
+
+        if (res.ok) {
+          const data = await res.json();
+          setContracts(data.contracts);
+          setTotalItems(data.total);
+        } else {
+          throw new Error("Failed to fetch data");
+        }
+      } catch (error) {
+        console.log("Error fetching contracts", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getContracts();
+  }, [page, pageSize]);
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
+  return loading ? (
+    <Spinner loading={loading} />
+  ) : (
     <section className="w-full">
       {/* Buscador */}
       <div className="mb-6 relative">
@@ -25,11 +57,21 @@ const Contracts = () => {
       </div>
 
       {/* Renderizado seguro */}
-      <div className="space-y-4">
-        {contracts.map((contract: any) => (
-          <ContractCard key={contract._id} contract={contract} />
-        ))}
-      </div>
+      {contracts.length === 0 ? (
+        <p>No contracts found</p>
+      ) : (
+        <div className="space-y-4">
+          {contracts.map((contract: any) => (
+            <ContractCard key={contract._id} contract={contract} />
+          ))}
+          <Pagination
+            page={page}
+            pageSize={pageSize}
+            totalItems={totalItems}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      )}
     </section>
   );
 };
