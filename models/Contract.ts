@@ -2,6 +2,12 @@ import { Schema, model, models, InferSchemaType } from "mongoose";
 
 const contractSchema = new Schema(
   {
+    studioId: {
+      type: Schema.Types.ObjectId,
+      ref: "Studio",
+      required: [true, "Studio ID is required"],
+      index: true, // Optimiza las búsquedas por estudio
+    },
     owner: {
       type: String,
       ref: "User",
