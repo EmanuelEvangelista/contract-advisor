@@ -122,8 +122,8 @@ const Navbar = () => {
                   href="/contracts/add"
                   className={`${
                     pathname === "/contracts/add"
-                      ? "bg-pink-500 text-white"
-                      : "text-pink-500 border border-pink-200 hover:bg-pink-50"
+                      ? "bg-indigo-500 text-white"
+                      : "text-indigo-500 border border-indigo-200 hover:bg-indigo-50"
                   } px-3 py-1.5 rounded-lg text-xs lg:text-sm font-bold transition-all whitespace-nowrap`}
                 >
                   + Add Contract

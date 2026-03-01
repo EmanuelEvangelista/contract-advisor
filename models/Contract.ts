@@ -29,12 +29,13 @@ const contractSchema = new Schema(
     },
     contractee_details: {
       name: { type: String, required: true },
-      email: { type: String },
+      email: { type: String, required: true },
       phone: { type: String },
     },
     assignedEmployee: {
       employeeId: { type: String },
       name: { type: String },
+      email: { type: String },
       role: { type: String },
     },
     startDate: {
@@ -77,6 +78,10 @@ const contractSchema = new Schema(
     pdfUrl: {
       type: String,
       default: null,
+    },
+    notes: {
+      type: String,
+      trim: true,
     },
   },
   { timestamps: true },
