@@ -1,72 +1,123 @@
-import { Schema, model, models, InferSchemaType } from "mongoose";
+import {
+  Schema,
+  model,
+  models,
+  InferSchemaType,
+  Document,
+  Types,
+} from "mongoose";
+
+/**
+ * Contract Schema
+ * Multi-tenant ready (studio-based isolation)
+ */
 
 const contractSchema = new Schema(
   {
+    // ===== RELATIONS =====
+
     studioId: {
-      type: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId, // Mongoose espera Types.ObjectId
       ref: "Studio",
       required: [true, "Studio ID is required"],
-      index: true, // Optimiza las búsquedas por estudio
+      index: true,
     },
     owner: {
-      type: String,
+      type: Schema.Types.ObjectId, // Mongoose espera Types.ObjectId
       ref: "User",
       required: [true, "Owner ID is required"],
+      index: true,
     },
+
+    // ===== BASIC INFO =====
+
     contractName: {
       type: String,
       required: [true, "Contract name is required"],
+      trim: true,
     },
+
     contractType: {
       type: String,
-      required: [true, "Contract type is required"],
-      enum: ["Parcelary", "Leasing", "Harvesting", "Service", "Storage"], // Basado en tus datos
+      required: true,
+      enum: ["Parcelary", "Leasing", "Harvesting", "Service", "Storage"],
     },
+
+    status: {
+      type: String,
+      default: "Active",
+      enum: ["Active", "Pending", "Expired", "Archived"],
+      index: true,
+    },
+
+    // ===== PARTIES =====
+
     contractor_details: {
-      name: { type: String, required: true },
-      email: { type: String, required: true },
-      phone: { type: String },
+      name: { type: String, required: true, trim: true },
+      email: { type: String, required: true, trim: true },
+      phone: { type: String, trim: true },
     },
+
     contractee_details: {
-      name: { type: String, required: true },
-      email: { type: String, required: true },
-      phone: { type: String },
+      name: { type: String, required: true, trim: true },
+      email: { type: String, required: true, trim: true },
+      phone: { type: String, trim: true },
     },
+
+    // Snapshot version (legal safety)
     assignedEmployee: {
       employeeId: { type: String },
       name: { type: String },
       email: { type: String },
       role: { type: String },
     },
+
+    // ===== DATES =====
+
     startDate: {
       type: Date,
-      required: [true, "Start date is required"],
+      required: true,
+      index: true,
     },
+
     expiryDate: {
       type: Date,
-      required: [true, "Expiry date is required"],
+      required: true,
+      index: true,
     },
-    status: {
-      type: String,
-      default: "Active",
-      enum: ["Active", "Pending", "Expired", "Archived"],
-    },
+
+    // ===== PAYMENT =====
+
     paymentMethod: {
       type: String,
       required: true,
       enum: ["In-Kind", "Cash"],
     },
+
     paymentDetails: {
-      // Campos para In-Kind
-      commodity: { type: String },
-      quantity: { type: Number },
-      unit: { type: String },
-      // Campos para Cash
-      amount: { type: Number },
-      currency: { type: String },
-      // Común
-      frequency: { type: String },
+      amount: Number,
+
+      currency: {
+        type: String,
+        enum: ["USD", "ARS"],
+      },
+
+      commodity: String,
+      quantity: Number,
+
+      unit: {
+        type: String,
+        enum: ["Tons", "Quintals"],
+      },
+
+      frequency: {
+        type: String,
+        enum: ["Annual", "Monthly", "Single Payment"],
+      },
     },
+
+    // ===== AGRO INFO =====
+
     agroDetails: {
       area: { type: String },
       location: { type: String },
@@ -75,23 +126,40 @@ const contractSchema = new Schema(
       equipmentModel: { type: String },
       insuranceIncluded: { type: Boolean, default: false },
     },
+
+    // ===== DOCUMENTS =====
+
     pdfUrl: {
       type: String,
       default: null,
     },
+
     notes: {
       type: String,
       trim: true,
     },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+  },
 );
 
-// Define TypeScript type based on Schema
+// ===== INDEXES (Performance Ready) =====
+
+// Multi-tenant filtering
+contractSchema.index({ studioId: 1, status: 1 });
+
+// Expiration queries (very common in SaaS)
+contractSchema.index({ studioId: 1, expiryDate: 1 });
+
+// ===== TYPES =====
+
 export type ContractType = InferSchemaType<typeof contractSchema> & {
   _id: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
-const Contract =
-  models.Contract || model<ContractType>("Contract", contractSchema);
+const Contract = models.Contract || model("Contract", contractSchema);
+
 export default Contract;

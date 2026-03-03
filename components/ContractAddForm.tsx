@@ -15,13 +15,21 @@ const ContractAddForm = () => {
   const [fields, setFields] = useState<ContractFormType>({
     studioId: "", // Se llenará en el backend o vía props
     owner: "",
-    contractName: "",
+    contractName: "This Parcelary contract",
     contractType: "Parcelary",
     status: "Active",
-    startDate: "",
-    expiryDate: "",
-    contractor_details: { name: "", email: "", phone: "" },
-    contractee_details: { name: "", email: "", phone: "" },
+    startDate: "2025-11-03",
+    expiryDate: "2026-11-03",
+    contractor_details: {
+      name: "Juan",
+      email: "juan@gmail.com",
+      phone: "54545454",
+    },
+    contractee_details: {
+      name: "Pedro",
+      email: "pedro@gmail.com",
+      phone: "45454551",
+    },
     paymentMethod: "Cash",
     paymentDetails: {
       amount: 0,
@@ -30,6 +38,8 @@ const ContractAddForm = () => {
       quantity: 0,
       unit: "Tons",
       frequency: "Annual",
+      // NUEVOS CAMPOS PARA EL CÁLCULO
+      quintalsPerHa: 0,
     },
     agroDetails: {
       area: "",
@@ -39,18 +49,42 @@ const ContractAddForm = () => {
       equipmentModel: "",
       insuranceIncluded: false,
     },
-    assignedEmployee: { employeeId: "", name: "", email: "", role: "" },
+    assignedEmployee: {
+      employeeId: "",
+      name: "Marcos Garcia",
+      email: "marcos@gmail.com",
+      role: "",
+    },
     pdfUrl: "",
     notes: "",
   });
 
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+
   const [employees, setEmployees] = useState([]); // Para el select de empleados
 
   // Simulación de carga de empleados (Aquí harías tu fetch a /api/studio/employees)
   useEffect(() => {
     // const fetchEmployees = async () => { ... }
   }, []);
+
+  useEffect(() => {
+    // Calculamos el total
+    const totalAmount =
+      Number(fields.agroDetails.area) *
+      (fields.paymentDetails.quintalsPerHa || 0);
+
+    // Solo actualizamos si el valor cambió para evitar loops infinitos
+    if (totalAmount !== fields.paymentDetails.amount) {
+      setFields((prev) => ({
+        ...prev,
+        paymentDetails: {
+          ...prev.paymentDetails,
+          amount: totalAmount,
+        },
+      }));
+    }
+  }, [fields.agroDetails.area, fields.paymentDetails.quintalsPerHa]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -64,6 +98,7 @@ const ContractAddForm = () => {
     >,
   ) => {
     const { name, value, type } = e.target;
+
     const val =
       type === "checkbox"
         ? (e.target as HTMLInputElement).checked
@@ -102,6 +137,8 @@ const ContractAddForm = () => {
     }
   };
 
+  const TotalAmount = () => {};
+
   const inputStyle =
     "w-full p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-all";
   const labelStyle =
@@ -111,6 +148,9 @@ const ContractAddForm = () => {
 
   return (
     <form
+      // action="/api/contracts"
+      // method="POST"
+      // encType="multipart/form-data"
       onSubmit={handleSubmit}
       className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-xl border border-slate-100"
     >
@@ -146,6 +186,7 @@ const ContractAddForm = () => {
               value={fields.contractType}
               onChange={handleChange}
               className={inputStyle}
+              required
             >
               <option value="Parcelary">Parcelary</option>
               <option value="Leasing">Leasing</option>
@@ -194,17 +235,17 @@ const ContractAddForm = () => {
               onChange={handleChange}
               placeholder="City, State, Plot number"
               className={inputStyle}
+              required
             />
           </div>
           <div>
             <label className={labelStyle}>Area (ha)</label>
             <input
-              type="text"
+              type="number"
               name="agroDetails.area"
               value={fields.agroDetails.area}
               onChange={handleChange}
-              placeholder="e.g. 150 ha"
-              className={inputStyle}
+              placeholder="Ej: 150"
             />
           </div>
           <div>
@@ -263,15 +304,28 @@ const ContractAddForm = () => {
           {fields.paymentMethod === "Cash" ? (
             <>
               <div>
-                <label className={labelStyle}>Amount</label>
+                <label className={labelStyle}>Quintals per HA</label>
                 <input
                   type="number"
-                  name="paymentDetails.amount"
-                  value={fields.paymentDetails.amount}
+                  name="paymentDetails.quintalsPerHa"
+                  value={fields.paymentDetails.quintalsPerHa}
                   onChange={handleChange}
                   className={inputStyle}
                 />
               </div>
+              <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+                <label className="text-indigo-900 font-bold block mb-1">
+                  Total Amount Estimated
+                </label>
+                <input
+                  type="number"
+                  name="paymentDetails.amount"
+                  value={fields.paymentDetails.amount}
+                  readOnly // Lo hacemos de solo lectura porque se calcula solo
+                  className="bg-transparent text-xl font-extrabold text-indigo-700 outline-none"
+                />
+              </div>
+
               <div>
                 <label className={labelStyle}>Currency</label>
                 <select
