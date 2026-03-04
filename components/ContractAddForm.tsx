@@ -1,34 +1,65 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   FaFileContract,
-  FaMapMarkedAlt,
+  FaUserFriends,
   FaWallet,
   FaSeedling,
   FaCloudUploadAlt,
-  FaUserEdit,
+  FaStickyNote,
 } from "react-icons/fa";
 import { ContractFormType } from "@/types/contract";
+
+// 1. Estado inicial fuera para poder reutilizarlo al resetear
+const initialState: any = {
+  contractName: "",
+  contractType: "Parcelary",
+  status: "Active",
+  startDate: "",
+  expiryDate: "",
+  contractor_details: { name: "", email: "", phone: "" },
+  contractee_details: { name: "", email: "", phone: "" },
+  paymentMethod: "Cash",
+  paymentDetails: {
+    amount: 0,
+    currency: "USD",
+    commodity: "",
+    quantity: 0,
+    unit: "Tons",
+    frequency: "Annual",
+    quintalsPerHa: 0,
+  },
+  agroDetails: {
+    area: "",
+    location: "",
+    cropType: "Soybean",
+    parcelId: "",
+    equipmentModel: "",
+    insuranceIncluded: false,
+  },
+  pdfs: [],
+  notes: "",
+};
 
 const ContractAddForm = () => {
   const [fields, setFields] = useState<ContractFormType>({
     studioId: "", // Se llenará en el backend o vía props
     owner: "",
-    contractName: "This Parcelary contract",
+    contractName: "",
     contractType: "Parcelary",
     status: "Active",
-    startDate: "2025-11-03",
-    expiryDate: "2026-11-03",
+    startDate: "",
+    expiryDate: "",
     contractor_details: {
-      name: "Juan",
-      email: "juan@gmail.com",
-      phone: "54545454",
+      name: "",
+      email: "",
+      phone: "",
     },
     contractee_details: {
-      name: "Pedro",
-      email: "pedro@gmail.com",
-      phone: "45454551",
+      name: "",
+      email: "",
+      phone: "",
     },
     paymentMethod: "Cash",
     paymentDetails: {
@@ -51,15 +82,15 @@ const ContractAddForm = () => {
     },
     assignedEmployee: {
       employeeId: "",
-      name: "Marcos Garcia",
-      email: "marcos@gmail.com",
+      name: "",
+      email: "",
       role: "",
     },
-    pdfUrl: "",
+    pdfs: [],
     notes: "",
   });
-
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const [employees, setEmployees] = useState([]); // Para el select de empleados
 
@@ -85,12 +116,6 @@ const ContractAddForm = () => {
       }));
     }
   }, [fields.agroDetails.area, fields.paymentDetails.quintalsPerHa]);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      setPdfFile(e.target.files[0]);
-    }
-  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -119,11 +144,27 @@ const ContractAddForm = () => {
     });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      setFields((prev) => ({
+        ...prev,
+        pdfs: [...(prev.pdfs || []), ...newFiles],
+      }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const formData = new FormData();
     formData.append("data", JSON.stringify(fields));
-    if (pdfFile) formData.append("file", pdfFile);
+
+    if (fields.pdfs) {
+      fields.pdfs.forEach((file: File) => {
+        formData.append("file", file);
+      });
+    }
 
     try {
       const res = await fetch("/api/contracts", {
@@ -131,26 +172,30 @@ const ContractAddForm = () => {
         body: formData,
       });
       const result = await res.json();
-      if (res.ok) alert("Contract Saved Successfully");
+      if (res.ok) {
+        alert("Contract Saved Successfully!");
+        setFields(initialState); // Resetear estado
+        formRef.current?.reset(); // Resetear input visualmente
+      } else {
+        const err = await res.json();
+        alert("Error: " + err.error);
+      }
     } catch (error) {
       console.error("Error saving contract", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const TotalAmount = () => {};
-
-  const inputStyle =
-    "w-full p-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-all";
-  const labelStyle =
-    "block text-xs font-bold text-slate-500 uppercase mb-1 ml-1";
+  // --- Estilos Reutilizables ---
   const sectionTitle =
-    "flex items-center gap-2 text-lg font-bold text-indigo-900 border-b pb-2 mb-4 mt-8";
+    "flex items-center gap-2 text-xl font-bold text-slate-800 mb-5 border-b pb-2";
+  const labelStyle = "block text-sm font-semibold text-slate-700 mb-1";
+  const inputStyle =
+    "w-full px-4 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400 text-slate-600";
 
   return (
     <form
-      // action="/api/contracts"
-      // method="POST"
-      // encType="multipart/form-data"
       onSubmit={handleSubmit}
       className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-xl border border-slate-100"
     >
@@ -162,9 +207,9 @@ const ContractAddForm = () => {
       </div>
 
       {/* 1. GENERAL & DATES */}
-      <section>
+      <section className="mb-10">
         <h2 className={sectionTitle}>
-          <FaFileContract /> General Information
+          <FaFileContract className="text-indigo-600" /> General Information
         </h2>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
@@ -220,10 +265,104 @@ const ContractAddForm = () => {
         </div>
       </section>
 
-      {/* 2. AGRO DETAILS */}
-      <section>
+      {/* 2. PARTIES INVOLVED (Solución a los errores de validación) */}
+      <section className="mb-10">
         <h2 className={sectionTitle}>
-          <FaSeedling /> Agro Details
+          <FaUserFriends className="text-indigo-600" /> Parties Involved
+        </h2>
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Contractor */}
+          <div className="space-y-3 p-5 bg-slate-50 rounded-xl border border-slate-200">
+            <h3 className="text-xs font-black text-indigo-600 uppercase tracking-widest mb-2">
+              Contractor (Provider)
+            </h3>
+            <div>
+              <label className={labelStyle}>Full Name</label>
+              <input
+                type="text"
+                name="contractor_details.name"
+                value={fields.contractor_details.name}
+                onChange={handleChange}
+                className={inputStyle}
+                placeholder="Name or Company"
+                required
+              />
+            </div>
+            <div>
+              <label className={labelStyle}>Email</label>
+              <input
+                type="email"
+                name="contractor_details.email"
+                value={fields.contractor_details.email}
+                onChange={handleChange}
+                className={inputStyle}
+                placeholder="email@example.com"
+                required
+              />
+            </div>
+            <div>
+              <label className={labelStyle}>Phone</label>
+              <input
+                type="tel"
+                name="contractor_details.phone"
+                value={fields.contractor_details.phone}
+                onChange={handleChange}
+                className={inputStyle}
+                placeholder="555444555"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Contractee */}
+          <div className="space-y-3 p-5 bg-slate-50 rounded-xl border border-slate-200">
+            <h3 className="text-xs font-black text-indigo-600 uppercase tracking-widest mb-2">
+              Contractee (Client)
+            </h3>
+            <div>
+              <label className={labelStyle}>Full Name</label>
+              <input
+                type="text"
+                name="contractee_details.name"
+                value={fields.contractee_details.name}
+                onChange={handleChange}
+                className={inputStyle}
+                placeholder="Name or Company"
+                required
+              />
+            </div>
+            <div>
+              <label className={labelStyle}>Email</label>
+              <input
+                type="email"
+                name="contractee_details.email"
+                value={fields.contractee_details.email}
+                onChange={handleChange}
+                className={inputStyle}
+                placeholder="email@example.com"
+                required
+              />
+            </div>
+            <div>
+              <label className={labelStyle}>Phone</label>
+              <input
+                type="number"
+                name="contractee_details.phone"
+                value={fields.contractee_details.phone}
+                onChange={handleChange}
+                className={inputStyle}
+                placeholder="555444555"
+                required
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. AGRO DETAILS */}
+      <section className="mb-10">
+        <h2 className={sectionTitle}>
+          <FaSeedling className="text-indigo-600" /> Agro Details
         </h2>
         <div className="grid md:grid-cols-3 gap-4">
           <div className="md:col-span-2">
@@ -245,7 +384,9 @@ const ContractAddForm = () => {
               name="agroDetails.area"
               value={fields.agroDetails.area}
               onChange={handleChange}
-              placeholder="Ej: 150"
+              placeholder="e.g. 150"
+              className={inputStyle}
+              required
             />
           </div>
           <div>
@@ -267,12 +408,12 @@ const ContractAddForm = () => {
               name="agroDetails.insuranceIncluded"
               checked={fields.agroDetails.insuranceIncluded}
               onChange={handleChange}
-              className="w-4 h-4 text-indigo-600 border-slate-300 rounded"
+              className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
               id="insurance"
             />
             <label
               htmlFor="insurance"
-              className="ml-2 text-sm font-medium text-slate-600"
+              className="ml-2 text-sm font-medium text-slate-600 cursor-pointer"
             >
               Insurance Included
             </label>
@@ -280,10 +421,10 @@ const ContractAddForm = () => {
         </div>
       </section>
 
-      {/* 3. PAYMENT (Tu lógica de Switch corregida) */}
-      <section className="mt-8 p-6 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+      {/* 4. PAYMENT STRATEGY */}
+      <section className="mb-10 p-6 bg-indigo-50/50 rounded-2xl border border-indigo-100">
         <h2 className={sectionTitle}>
-          <FaWallet /> Payment Strategy
+          <FaWallet className="text-indigo-600" /> Payment Strategy
         </h2>
         <div className="flex gap-4 mb-6">
           {["Cash", "In-Kind"].map((method) => (
@@ -293,7 +434,11 @@ const ContractAddForm = () => {
               onClick={() =>
                 setFields((p) => ({ ...p, paymentMethod: method as any }))
               }
-              className={`flex-1 py-2 rounded-lg font-bold text-sm transition-all ${fields.paymentMethod === method ? "bg-indigo-600 text-white shadow-md" : "bg-white text-slate-500 border border-slate-200"}`}
+              className={`flex-1 py-2 rounded-lg font-bold text-sm transition-all ${
+                fields.paymentMethod === method
+                  ? "bg-indigo-600 text-white shadow-md shadow-indigo-200"
+                  : "bg-white text-slate-500 border border-slate-200 hover:bg-slate-50"
+              }`}
             >
               {method}
             </button>
@@ -311,21 +456,24 @@ const ContractAddForm = () => {
                   value={fields.paymentDetails.quintalsPerHa}
                   onChange={handleChange}
                   className={inputStyle}
+                  placeholder="0"
                 />
               </div>
-              <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
-                <label className="text-indigo-900 font-bold block mb-1">
-                  Total Amount Estimated
+              <div className="bg-white p-4 rounded-xl border border-indigo-200 shadow-sm">
+                <label className="text-indigo-900 font-bold block text-xs uppercase mb-1">
+                  Total Amount (Auto)
                 </label>
-                <input
-                  type="number"
-                  name="paymentDetails.amount"
-                  value={fields.paymentDetails.amount}
-                  readOnly // Lo hacemos de solo lectura porque se calcula solo
-                  className="bg-transparent text-xl font-extrabold text-indigo-700 outline-none"
-                />
+                <div className="flex items-center gap-1">
+                  <span className="text-indigo-600 font-bold text-xl">$</span>
+                  <input
+                    type="number"
+                    name="paymentDetails.amount"
+                    value={fields.paymentDetails.amount}
+                    readOnly
+                    className="bg-transparent text-xl font-black text-indigo-700 outline-none w-full"
+                  />
+                </div>
               </div>
-
               <div>
                 <label className={labelStyle}>Currency</label>
                 <select
@@ -353,23 +501,29 @@ const ContractAddForm = () => {
                 />
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <input
-                  type="number"
-                  name="paymentDetails.quantity"
-                  value={fields.paymentDetails.quantity}
-                  onChange={handleChange}
-                  placeholder="Qty"
-                  className={inputStyle}
-                />
-                <select
-                  name="paymentDetails.unit"
-                  value={fields.paymentDetails.unit}
-                  onChange={handleChange}
-                  className={inputStyle}
-                >
-                  <option value="Tons">Tons</option>
-                  <option value="Quintals">Quintals</option>
-                </select>
+                <div>
+                  <label className={labelStyle}>Quantity</label>
+                  <input
+                    type="number"
+                    name="paymentDetails.quantity"
+                    value={fields.paymentDetails.quantity}
+                    onChange={handleChange}
+                    placeholder="Qty"
+                    className={inputStyle}
+                  />
+                </div>
+                <div>
+                  <label className={labelStyle}>Unit</label>
+                  <select
+                    name="paymentDetails.unit"
+                    value={fields.paymentDetails.unit}
+                    onChange={handleChange}
+                    className={inputStyle}
+                  >
+                    <option value="Tons">Tons</option>
+                    <option value="Quintals">Quintals</option>
+                  </select>
+                </div>
               </div>
             </>
           )}
@@ -389,37 +543,91 @@ const ContractAddForm = () => {
         </div>
       </section>
 
-      {/* 4. ATTACHMENT */}
-      <section>
+      {/* 5. NOTES */}
+      <section className="mb-10">
         <h2 className={sectionTitle}>
-          <FaCloudUploadAlt /> Document (PDF)
+          <FaStickyNote className="text-indigo-600" /> Additional Notes
         </h2>
-        <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition-all">
+        <textarea
+          name="notes"
+          rows={3}
+          value={fields.notes}
+          onChange={handleChange}
+          className={`${inputStyle} resize-none h-28`}
+          placeholder="Write any legal details, special clauses, or important reminders here..."
+        />
+      </section>
+
+      {/* 6. ATTACHMENT */}
+      <section className="mb-10">
+        <h2 className={sectionTitle}>
+          <FaCloudUploadAlt className="text-indigo-600" /> Document (PDF)
+        </h2>
+        <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-indigo-50 hover:border-indigo-300 transition-all group">
           <div className="text-center">
-            <FaCloudUploadAlt className="mx-auto text-3xl text-slate-400 mb-2" />
+            <FaCloudUploadAlt className="mx-auto text-3xl text-slate-400 group-hover:text-indigo-500 mb-2 transition-colors" />
             <p className="text-sm text-slate-600 font-medium">
-              {pdfFile ? pdfFile.name : "Click to upload contract PDF"}
+              {fields.pdfs && fields.pdfs.length > 0 ? (
+                <span className="text-indigo-600 font-bold">
+                  {/* Si hay 1 solo, muestra el nombre. Si hay varios, muestra la cantidad */}
+                  {fields.pdfs.length === 1
+                    ? fields.pdfs[0].name
+                    : `${fields.pdfs.length} files selected`}
+                </span>
+              ) : (
+                "Click to upload contract PDF"
+              )}
             </p>
           </div>
           <input
             type="file"
+            id="file"
             className="hidden"
             accept=".pdf"
             onChange={handleFileChange}
           />
+          {fields.pdfs && fields.pdfs.length > 0 && (
+            <div className="mt-4 space-y-2">
+              {fields.pdfs.map((file, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between bg-slate-50 border border-slate-200 px-3 py-2 rounded-lg"
+                >
+                  <span className="text-xs text-slate-500 truncate max-w-[250px] italic">
+                    {file.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFields((prev) => ({
+                        ...prev,
+                        pdfs: [
+                          ...(prev.pdfs || []).filter((_, i) => i !== index),
+                        ],
+                      }));
+                    }}
+                    className="text-rose-500 hover:text-rose-700 text-xs font-bold"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </label>
       </section>
 
-      <div className="flex justify-end mt-10 gap-4">
+      {/* ACTIONS */}
+      <div className="flex justify-end items-center mt-10 gap-6 border-t pt-8">
         <button
           type="button"
-          className="px-6 py-3 text-sm font-bold text-slate-500 hover:text-slate-700"
+          className="text-sm font-bold text-slate-400 hover:text-rose-500 transition-colors"
         >
-          Cancel
+          Discard Changes
         </button>
         <button
           type="submit"
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-3 rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all active:scale-95"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-12 py-4 rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all active:scale-95 flex items-center gap-2"
         >
           Save Contract
         </button>

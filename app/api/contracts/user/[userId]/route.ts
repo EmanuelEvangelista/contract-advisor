@@ -26,7 +26,9 @@ export const GET = async (
   try {
     await connectDB();
 
-    const contracts = await Contract.find({ owner: idUser });
+    const contracts = await Contract.find({
+      $or: [{ owner: userId }, { studioId: userId }],
+    }).sort({ createdAt: -1 }); // Los más nuevos primero
 
     return NextResponse.json(contracts);
   } catch (error) {

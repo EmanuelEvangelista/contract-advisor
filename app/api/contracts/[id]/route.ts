@@ -1,11 +1,12 @@
 import connectDB from "@/config/database";
 import { NextRequest, NextResponse } from "next/server";
 import Contract from "@/models/Contract";
-// import { getSessionUser } from "@/utils/getSessionUser";
+import cloudinary from "@/config/cloudinary";
 import mongoose from "mongoose";
+import { getSessionUser } from "@/utils/getSessionUser";
 
 type Props = {
-  params: Promise<{ id: string }>; // Importante: Es una Promesa
+  params: Promise<{ id: string }>;
 };
 
 //GET /api/contracts/:id
@@ -46,63 +47,71 @@ export const GET = async (request: NextRequest, { params }: Props) => {
 };
 
 //DELETE /api/contracts/:id
-// export const DELETE = async (request: NextRequest, { params }: Props) => {
-//   const { id } = await params;
+export const DELETE = async (
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) => {
+  try {
+    const { id: contractId } = await params;
+    const sessionUser = await getSessionUser();
 
-//   try {
-//     const contractId = id;
+    if (!sessionUser || !sessionUser.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-//     // const sessionUser = await getSessionUser();
+    const { userId, user } = sessionUser;
+    await connectDB();
 
-//     // Check for session
-//     // if (!sessionUser || !sessionUser.userId) {
-//     //   return NextResponse.json(
-//     //     { error: "User ID is required" },
-//     //     {
-//     //       status: 401,
-//     //     },
-//     //   );
-//     // }
+    const contract = await Contract.findById(contractId);
 
-//     // const { userId } = sessionUser;
+    if (!contract) {
+      return NextResponse.json(
+        { error: "Contract not found" },
+        { status: 404 },
+      );
+    }
 
-//     await connectDB();
+    // --- LÓGICA DE PERMISOS MEJORADA ---
+    // 1. Si es el dueño (el que lo creó) -> Puede borrar
+    // 2. Si es el contador del estudio -> Puede borrar cualquier contrato del estudio
+    const isOwner = contract.owner.toString() === userId;
+    const isStudioAdmin =
+      user.role === "accountant" && contract.studioId === user.studioId;
 
-//     const contract = await Contract.findById(contractId);
+    if (!isOwner && !isStudioAdmin) {
+      return NextResponse.json(
+        { error: "Unauthorized to delete this contract" },
+        { status: 401 },
+      );
+    }
 
-//     if (!contract) {
-//       return NextResponse.json(
-//         { error: "Property not found" },
-//         {
-//           status: 404,
-//         },
-//       );
-//     }
+    // --- LIMPIEZA DE CLOUDINARY
 
-//     // Verify ownership
-//     if (contract.owner.toString() !== userId) {
-//       return NextResponse.json(
-//         { error: "Unauthorized" },
-//         {
-//           status: 401,
-//         },
-//       );
-//     }
+    // Si los archivos son importantes de borrar en la nube:
+    if (contract.pdfs && contract.pdfs.length > 0) {
+      for (const url of contract.pdfs) {
+        // Extraer el public_id de la URL de cloudinary
+        const parts = url.split("/");
+        const fileName = parts[parts.length - 1].split(".")[0];
+        const folder = "contractadvisor"; // El nombre que usamos antes
+        await cloudinary.uploader.destroy(`${folder}/${fileName}`);
+      }
+    }
 
-//     await contract.deleteOne();
+    await contract.deleteOne();
 
-//     return NextResponse.json({ message: "Property deleted" }, { status: 200 });
-//   } catch (error) {
-//     console.error("Database connection error:", error);
-//     return NextResponse.json(
-//       { error: "Database connection failed" },
-//       {
-//         status: 500,
-//         headers: { "Content-Type": "application/json" },
-//       },
-//     );
-//   }
-// };
+    return NextResponse.json(
+      { message: "Contract deleted successfully" },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Delete error:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+};
 
 // // Put /api/properties/:id
 // export const PUT = async (request: NextRequest, { params }: Props) => {

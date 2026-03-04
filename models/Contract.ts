@@ -129,8 +129,8 @@ const contractSchema = new Schema(
 
     // ===== DOCUMENTS =====
 
-    pdfUrl: {
-      type: String,
+    pdfs: {
+      type: [{ type: String }],
       default: null,
     },
 

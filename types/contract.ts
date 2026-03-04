@@ -79,6 +79,6 @@ export type ContractFormType = {
 
   assignedEmployee?: AssignedEmployeeForm;
 
-  pdfUrl?: string;
+  pdfs?: File[];
   notes?: string;
 };
