@@ -426,6 +426,7 @@ const ContractAddForm = () => {
         <h2 className={sectionTitle}>
           <FaWallet className="text-indigo-600" /> Payment Strategy
         </h2>
+
         <div className="flex gap-4 mb-6">
           {["Cash", "In-Kind"].map((method) => (
             <button
@@ -446,8 +447,57 @@ const ContractAddForm = () => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-4">
-          {fields.paymentMethod === "Cash" ? (
+          {fields.paymentMethod === "In-Kind" ? (
             <>
+              {/* SELECT PARA COMMODITY EN IN-KIND */}
+              <div>
+                <label className={labelStyle}>Commodity</label>
+                <select
+                  name="paymentDetails.commodity"
+                  value={fields.paymentDetails.commodity}
+                  onChange={handleChange}
+                  className={inputStyle}
+                  required
+                >
+                  <option value="">Select Grain</option>
+                  <option value="Soybean">Soybean</option>
+                  <option value="Corn">Corn</option>
+                  <option value="Wheat">Wheat</option>
+                  <option value="Sunflower">Sunflower</option>
+                  <option value="Sorghum">Sorghum</option>
+                  <option value="Barley">Barley</option>
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className={labelStyle}>Quantity</label>
+                  <input
+                    type="number"
+                    name="paymentDetails.quantity"
+                    value={fields.paymentDetails.quantity}
+                    onChange={handleChange}
+                    placeholder="Qty"
+                    className={inputStyle}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className={labelStyle}>Unit</label>
+                  <select
+                    name="paymentDetails.unit"
+                    value={fields.paymentDetails.unit}
+                    onChange={handleChange}
+                    className={inputStyle}
+                  >
+                    <option value="Tons">Tons</option>
+                    <option value="Quintals">Quintals</option>
+                  </select>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* SECCIÓN CASH CON CÁLCULO DE QUINTALES */}
               <div>
                 <label className={labelStyle}>Quintals per HA</label>
                 <input
@@ -461,10 +511,10 @@ const ContractAddForm = () => {
               </div>
               <div className="bg-white p-4 rounded-xl border border-indigo-200 shadow-sm">
                 <label className="text-indigo-900 font-bold block text-xs uppercase mb-1">
-                  Total Amount (Auto)
+                  Total Amount
                 </label>
                 <div className="flex items-center gap-1">
-                  <span className="text-indigo-600 font-bold text-xl">$</span>
+                  <span className="text-indigo-600 font-bold text-xl">QQ</span>
                   <input
                     type="number"
                     name="paymentDetails.amount"
@@ -487,46 +537,9 @@ const ContractAddForm = () => {
                 </select>
               </div>
             </>
-          ) : (
-            <>
-              <div>
-                <label className={labelStyle}>Commodity</label>
-                <input
-                  type="text"
-                  name="paymentDetails.commodity"
-                  value={fields.paymentDetails.commodity}
-                  onChange={handleChange}
-                  placeholder="Soybean"
-                  className={inputStyle}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className={labelStyle}>Quantity</label>
-                  <input
-                    type="number"
-                    name="paymentDetails.quantity"
-                    value={fields.paymentDetails.quantity}
-                    onChange={handleChange}
-                    placeholder="Qty"
-                    className={inputStyle}
-                  />
-                </div>
-                <div>
-                  <label className={labelStyle}>Unit</label>
-                  <select
-                    name="paymentDetails.unit"
-                    value={fields.paymentDetails.unit}
-                    onChange={handleChange}
-                    className={inputStyle}
-                  >
-                    <option value="Tons">Tons</option>
-                    <option value="Quintals">Quintals</option>
-                  </select>
-                </div>
-              </div>
-            </>
           )}
+
+          {/* LA FRECUENCIA SE MANTIENE PARA AMBOS MÉTODOS */}
           <div>
             <label className={labelStyle}>Frequency</label>
             <select

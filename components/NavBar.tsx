@@ -108,7 +108,14 @@ const Navbar = () => {
                 className={`${pathname === "/panel" ? "text-indigo-900 border-b-2 border-indigo-900" : "text-slate-400 hover:text-indigo-900"} 
                 pb-1 text-sm lg:text-base font-medium transition-all`}
               >
-                My Panel
+                Panel
+              </Link>
+              <Link
+                href="/profile"
+                className={`${pathname === "/profile" ? "text-indigo-900 border-b-2 border-indigo-900" : "text-slate-400 hover:text-indigo-900"} 
+                pb-1 text-sm lg:text-base font-medium transition-all`}
+              >
+                My Profile
               </Link>
               <Link
                 href="/contracts"

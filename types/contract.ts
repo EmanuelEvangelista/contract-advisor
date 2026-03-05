@@ -25,6 +25,13 @@ export type PartyDetails = {
   phone?: string;
 };
 
+export interface ContractType {
+  _id: string;
+  name: string;
+  createdAt: string;
+  studioId: string;
+}
+
 export type AssignedEmployeeForm = {
   employeeId: string;
   name: string;
