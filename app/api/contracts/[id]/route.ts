@@ -63,6 +63,7 @@ export const DELETE = async (
     await connectDB();
 
     const contract = await Contract.findById(contractId);
+    console.log(contract);
 
     if (!contract) {
       return NextResponse.json(
@@ -74,9 +75,10 @@ export const DELETE = async (
     // --- LÓGICA DE PERMISOS MEJORADA ---
     // 1. Si es el dueño (el que lo creó) -> Puede borrar
     // 2. Si es el contador del estudio -> Puede borrar cualquier contrato del estudio
-    const isOwner = contract.owner.toString() === userId;
+    const isOwner = contract.owner.toString() === sessionUser.userId;
     const isStudioAdmin =
-      user.role === "accountant" && contract.studioId === user.studioId;
+      user.role === "accountant" &&
+      contract.studioId.toString() === user.studioId;
 
     if (!isOwner && !isStudioAdmin) {
       return NextResponse.json(
@@ -110,6 +112,84 @@ export const DELETE = async (
       { error: "Internal Server Error" },
       { status: 500 },
     );
+  }
+};
+
+// // Put /api/contracts/:id
+export const PUT = async (
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) => {
+  try {
+    await connectDB();
+    const { id } = await params;
+    const sessionUser = await getSessionUser();
+
+    // 1. Validación de Sesión
+    if (!sessionUser || !sessionUser.userId) {
+      return NextResponse.json(
+        { message: "User ID is required" },
+        { status: 401 },
+      );
+    }
+
+    const { userId, user } = sessionUser;
+    const { role, studioId, email, name } = user; // Extraemos el role aquí
+
+    // 2. Buscar contrato existente
+    const existingContract = await Contract.findById(id);
+    if (!existingContract) {
+      return NextResponse.json(
+        { message: "Contract does not exist" },
+        { status: 404 },
+      );
+    }
+
+    // 3. VALIDACIÓN DE PERMISOS (Nestrly Logic)
+    // El 'counter' o 'admin' pueden todo. El 'employee' solo lo suyo.
+    const isPowerUser = role === "counter" || role === "admin";
+    const isOwner = existingContract.owner.toString() === userId;
+
+    if (!isPowerUser && !isOwner) {
+      return NextResponse.json(
+        { message: "No tienes permiso para editar este contrato" },
+        { status: 403 },
+      );
+    }
+
+    // 4. Leer datos del body
+    const data = await request.json();
+
+    // 5. PREPARAR EL OBJETO (Mantenemos coherencia de datos)
+    const contractData = {
+      ...data,
+      studioId,
+      // Si el usuario es empleado, nos aseguramos de que no cambie el owner a otro
+      owner: isPowerUser ? data.owner || existingContract.owner : userId,
+      assignedEmployee: {
+        employeeId: userId,
+        name,
+        email,
+        role,
+      },
+      startDate: data.startDate
+        ? new Date(data.startDate)
+        : existingContract.startDate,
+      expiryDate: data.expiryDate
+        ? new Date(data.expiryDate)
+        : existingContract.expiryDate,
+    };
+
+    // 6. Actualizar
+    const updatedContract = await Contract.findByIdAndUpdate(id, contractData, {
+      new: true,
+      runValidators: true,
+    });
+
+    return NextResponse.json(updatedContract, { status: 200 });
+  } catch (error: any) {
+    console.error("Failed to update contract:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 };
 

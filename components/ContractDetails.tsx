@@ -1,5 +1,4 @@
 "use client";
-
 import {
   FaCalendarAlt,
   FaFilePdf,
@@ -16,6 +15,7 @@ import {
   FaExclamationTriangle,
 } from "react-icons/fa";
 import ContractPdfs from "@/components/ContractPdfs";
+import ContractActions from "@/components/ContractAction";
 
 const ContractDetails = ({ contract }: { contract: any }) => {
   if (!contract) return null;
@@ -29,6 +29,10 @@ const ContractDetails = ({ contract }: { contract: any }) => {
 
   return (
     <div className="bg-slate-50 min-h-screen p-4 md:p-8">
+      <ContractActions
+        contractId={contract._id}
+        contractOwner={contract.owner?._id || contract.owner}
+      />
       <div className="max-w-5xl mx-auto space-y-6">
         {/* HEADER: Título y VENCIMIENTO RESALTADO */}
         <div className="bg-white p-6 md:p-10 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">

@@ -16,7 +16,7 @@ const Navbar = () => {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState<boolean>(false);
-  const [providers, setProviders] = useState<Record<string, any>>(null);
+  const [providers, setProviders] = useState<Record<string, any>>();
 
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);

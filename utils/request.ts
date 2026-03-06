@@ -51,4 +51,24 @@ async function fetchContract(id: string): Promise<ContractType | null> {
   }
 }
 
-export { fetchContracts, fetchContract };
+async function deleteContract(id: string): Promise<boolean> {
+  const apiDomain = process.env.NEXT_PUBLIC_API_DOMAIN || null;
+  try {
+    if (!apiDomain) return false;
+
+    const res = await fetch(`${apiDomain}/contracts/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to delete contract");
+    }
+
+    return true; // Si todo salió bien, devolvemos true
+  } catch (error) {
+    console.error("Error deleting contract:", error);
+    return false;
+  }
+}
+
+export { fetchContracts, deleteContract, fetchContract };

@@ -50,13 +50,6 @@ const ContractPage = () => {
       {loading && <Spinner loading={loading} />}
       {!loading && (
         <>
-          {/* {property.images && property.images.length > 0 && (
-            <PropertyHeaderImage
-              image={property.images[0]}
-              name={property.name}
-            />
-          )} */}
-
           <section>
             <div className="container m-auto py-6 px-6">
               <Link
@@ -70,12 +63,11 @@ const ContractPage = () => {
 
           <section className="bg-blue-50">
             <div className="container m-auto py-10 px-6">
-              <div className="grid grid-cols-1 md:grid-cols-[70%_28%] w-full gap-6">
+              <div className="max-w-5xl mx-auto">
                 <ContractDetails contract={contract} />
               </div>
             </div>
           </section>
-          {/* <PropertyImages images={property.images} /> */}
         </>
       )}
     </>
