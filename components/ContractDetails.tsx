@@ -125,6 +125,9 @@ const ContractDetails = ({ contract }: { contract: any }) => {
                       <p className="text-sm font-bold text-slate-800">
                         {contract.assignedEmployee.name}
                       </p>
+                      <p className="text-sm font-bold text-slate-800">
+                        {contract.assignedEmployee.email}
+                      </p>
                       <p className="text-[10px] text-slate-500 font-medium">
                         {contract.assignedEmployee.role}
                       </p>

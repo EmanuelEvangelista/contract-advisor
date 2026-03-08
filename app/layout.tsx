@@ -51,7 +51,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <NavBar />
             <main className="pt-20">{children}</main>
             <Footer />
-            {/* <ToastContainer /> */}
+            <ToastContainer />
           </body>
         </html>
       </AuthProvider>

@@ -71,4 +71,17 @@ async function deleteContract(id: string): Promise<boolean> {
   }
 }
 
-export { fetchContracts, deleteContract, fetchContract };
+async function fetchStudioMembers(studioId: string) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_DOMAIN}/studio/${studioId}/members`,
+    );
+    if (!res.ok) throw new Error("Failed to fetch members");
+    return await res.json();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+export { fetchContracts, deleteContract, fetchContract, fetchStudioMembers };
