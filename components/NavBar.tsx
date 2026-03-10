@@ -144,7 +144,7 @@ const Navbar = () => {
             {/* Invite Code - Solo Desktop y solo para Accountants */}
             {role === "accountant" && (
               <div className="hidden lg:block">
-                <InviteCode session={session} />
+                <InviteCode />
               </div>
             )}
 

@@ -6,14 +6,6 @@ export default withAuth(
     const { token } = req.nextauth;
     const { pathname } = req.nextUrl;
 
-    // 🔒 1. No logueado intentando rutas privadas
-    if (
-      !token &&
-      (pathname.startsWith("/panel") || pathname === "/onboarding")
-    ) {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
-
     // 🔥 2. Logueado entrando al home
     if (token && pathname === "/") {
       return NextResponse.redirect(new URL("/panel", req.url));

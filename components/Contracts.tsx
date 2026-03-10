@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import Spinner from "@/components/Spinner";
 import { ContractType } from "@/models/Contract";
 import Pagination from "@/components/Pagination";
+import { useSession } from "next-auth/react";
+import ContractSearchForm from "@/components/ContractSearchForm";
 
 const Contracts = () => {
   const [contracts, setContracts] = useState<ContractType[]>([]);
@@ -13,11 +15,21 @@ const Contracts = () => {
   const [pageSize, setPageSize] = useState<number>(6);
   const [totalItems, setTotalItems] = useState<number>(0);
 
+  const { data: session, status } = useSession();
+
   useEffect(() => {
     const getContracts = async () => {
+      if (!session?.user?.id) {
+        setContracts([]);
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
       try {
         const res = await fetch(
           `/api/contracts?page=${page}&pageSize=${pageSize}`,
+          { cache: "no-store" }, // Forzamos que no guarde basura en el navegador
         );
 
         if (res.ok) {
@@ -25,7 +37,7 @@ const Contracts = () => {
           setContracts(data.contracts);
           setTotalItems(data.total);
         } else {
-          throw new Error("Failed to fetch data");
+          setContracts([]); // Si falla (ej. 401), vaciamos la lista
         }
       } catch (error) {
         console.log("Error fetching contracts", error);
@@ -33,12 +45,23 @@ const Contracts = () => {
         setLoading(false);
       }
     };
+
     getContracts();
-  }, [page, pageSize]);
+  }, [page, pageSize, session?.user?.id]);
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
   };
+
+  // 2. Si NextAuth está cargando, mostramos el Spinner
+  if (status === "loading") {
+    return <Spinner loading={true} />;
+  }
+
+  // 3. SI NO HAY SESIÓN: Retornamos null (No renderiza nada en el HTML)
+  if (!session) {
+    return null;
+  }
 
   return loading ? (
     <Spinner loading={loading} />
@@ -46,14 +69,7 @@ const Contracts = () => {
     <section className="w-full">
       {/* Buscador */}
       <div className="mb-6 relative">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-          <FaSearch size={16} />
-        </div>
-        <input
-          type="text"
-          placeholder="Buscar contratos..."
-          className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-        />
+        <ContractSearchForm />
       </div>
 
       {/* Renderizado seguro */}

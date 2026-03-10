@@ -1,94 +1,94 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { fetchContract } from "@/utils/request";
-import { ContractType } from "@/models/Contract";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowAltCircleLeft, FaFileContract } from "react-icons/fa";
+import ContractCard from "@/components/ContractCard";
 import Spinner from "@/components/Spinner";
-import ContractDetails from "@/components/ContractDetails";
-import AssigneeSelector from "@/components/AssigneeSelector";
-import { useSession } from "next-auth/react";
+import ContractSearchForm from "@/components/ContractSearchForm";
+import { searchContracts } from "@/utils/request"; // 👈 importamos el helper
 
-const ContractPage = () => {
-  const { id } = useParams<{ id: string }>();
-  const { data: session } = useSession();
+const SearchResultsPage = () => {
+  const searchParams = useSearchParams();
 
-  const [contract, setContract] = useState<ContractType | null>(null);
+  const [contracts, setContracts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 1. DECLARAR LA FUNCIÓN AQUÍ (Fuera del useEffect)
-  const fetchContractData = async () => {
-    if (!id) return;
-    try {
-      // Usamos la función importada 'fetchContract' (la del utils)
-      const data = await fetchContract(id);
-      setContract(data);
-    } catch (error) {
-      console.error("Error fetching Contracts:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Obtenemos los filtros
+  const keyword = searchParams.get("keyword") || "";
+  const employee = searchParams.get("employee") || "";
+  const type = searchParams.get("type") || "All";
 
-  // 2. EL EFECTO SOLO LLAMA A LA FUNCIÓN
   useEffect(() => {
-    fetchContractData();
-  }, [id]);
+    const fetchSearchResults = async () => {
+      setLoading(true);
+      try {
+        // 👇 usamos el helper en vez de fetch manual
+        const data = await searchContracts({ keyword, employee, type });
+        setContracts(data);
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+        setContracts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (loading) return <Spinner loading={loading} />;
-
-  if (!contract)
-    return (
-      <h1 className="p-8 text-center text-3xl font-bold text-red-500">
-        Contract not found.
-      </h1>
-    );
+    fetchSearchResults();
+  }, [keyword, employee, type]);
 
   return (
     <>
-      {loading && <Spinner loading={loading} />}
-      {!loading && contract && (
-        <>
-          <section>
-            <div className="container m-auto py-6 px-6">
+      <section className="bg-slate-900 py-8 border-b border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ContractSearchForm />
+        </div>
+      </section>
+
+      <section className="px-4 py-8 bg-slate-50 min-h-screen">
+        <div className="max-w-7xl m-auto">
+          <Link
+            href="/contracts"
+            className="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-bold mb-6 transition-colors"
+          >
+            <FaArrowAltCircleLeft className="mr-2" /> Volver a Contratos
+          </Link>
+
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
+              <FaFileContract className="text-indigo-600" />
+              Resultados de Búsqueda
+            </h1>
+            <span className="bg-white border border-slate-200 text-slate-600 px-4 py-1 rounded-full text-sm font-bold shadow-sm">
+              {contracts.length} encontrados
+            </span>
+          </div>
+
+          {loading ? (
+            <Spinner loading={loading} />
+          ) : contracts.length === 0 ? (
+            <div className="bg-white border-2 border-dashed border-slate-200 rounded-3xl p-20 text-center">
+              <p className="text-slate-500 text-lg font-medium italic">
+                No se encontraron contratos que coincidan con tu búsqueda.
+              </p>
               <Link
                 href="/contracts"
-                className="text-blue-500 hover:text-blue-600 flex items-center"
+                className="mt-4 inline-block text-indigo-600 font-bold underline"
               >
-                <FaArrowLeft className="mr-2" /> Back to Contracts
+                Ver todos los contratos
               </Link>
             </div>
-          </section>
-
-          <section className="bg-blue-50">
-            <div className="container m-auto py-10 px-6">
-              <div className="grid grid-cols-1 md:grid-cols-70/30 w-full gap-6 max-w-5xl mx-auto">
-                {/* Columna principal con los detalles */}
-                <div className="md:col-span-1">
-                  <ContractDetails contract={contract} />
-                </div>
-
-                {/* Sidebar o sección de acciones: Aquí validamos el rol */}
-                <div className="space-y-4">
-                  {session?.user?.role === "accountant" && (
-                    <AssigneeSelector
-                      contractId={contract._id.toString()}
-                      currentOwnerId={contract.owner.toString()}
-                      studioId={session?.user?.studioId?.toString() || ""}
-                      onUpdate={fetchContractData}
-                    />
-                  )}
-
-                  {/* Otros controles laterales si hicieran falta */}
-                </div>
-              </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {contracts.map((contract) => (
+                <ContractCard key={contract._id} contract={contract} />
+              ))}
             </div>
-          </section>
-        </>
-      )}
+          )}
+        </div>
+      </section>
     </>
   );
 };
 
-export default ContractPage;
+export default SearchResultsPage;

@@ -7,30 +7,52 @@ import profileDefault from "@/assets/images/profile.png";
 import Spinner from "@/components/Spinner";
 import { toast } from "react-toastify";
 import { FaFileContract, FaEdit, FaTrash, FaEye } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+
+interface Contract {
+  _id: string;
+  contractName: string;
+  contractType: string;
+  status: string;
+  pdfs?: string[];
+}
 
 const ProfilePage = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const profileImage = session?.user?.image;
   const profileName = session?.user?.name;
   const profileEmail = session?.user?.email;
   const profileRole = session?.user?.role;
 
-  const [contracts, setContracts] = useState<any[]>([]);
+  const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
+    console.log("aca entra", status);
     const fetchUserContracts = async () => {
+      if (status !== "authenticated") {
+        setContracts([]);
+        setLoading(false);
+        router.push("/");
+        return;
+      }
+
+      setLoading(true);
       // Determinamos el ID a usar según el rol
       const identifier =
         profileRole === "accountant"
           ? session?.user?.studioId
           : session?.user?.id;
 
-      if (!identifier) return;
+      if (!identifier) {
+        setLoading(false);
+        return;
+      }
 
       try {
         const res = await fetch(`/api/contracts/user/${identifier}`);
-        if (res.status === 200) {
+        if (res.ok) {
           const data = await res.json();
           setContracts(data);
         }
@@ -42,10 +64,10 @@ const ProfilePage = () => {
       }
     };
 
-    if (session?.user) {
+    if (session?.user?.id) {
       fetchUserContracts();
     }
-  }, [session, profileRole]);
+  }, [session, status]);
 
   const handleDeleteContract = async (contractId: string) => {
     const confirmed = window.confirm(
@@ -59,7 +81,7 @@ const ProfilePage = () => {
         method: "DELETE",
       });
 
-      if (res.status === 200) {
+      if (res.ok) {
         // Remove the property from state
         const updatedContracts = contracts.filter(
           (contract) => contract._id !== contractId,
@@ -77,7 +99,7 @@ const ProfilePage = () => {
     }
   };
 
-  return (
+  return session ? (
     <section className="bg-slate-50 min-h-screen py-8 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
         {/* CABECERA: INFO DE USUARIO COMPACTA */}
@@ -141,10 +163,11 @@ const ProfilePage = () => {
                   {/* 1. Icono/Miniatura */}
                   <div className="flex-shrink-0 h-14 w-14 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-center overflow-hidden">
                     {contract.pdfs?.[0] ? (
-                      <img
+                      <Image
                         src={contract.pdfs[0].replace(/\.pdf$/, ".jpg")}
                         alt="doc"
-                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                        width={56}
+                        height={56}
                       />
                     ) : (
                       <FaFileContract size={20} className="text-slate-300" />
@@ -221,7 +244,7 @@ const ProfilePage = () => {
         </div>
       </div>
     </section>
-  );
+  ) : null;
 };
 
 export default ProfilePage;

@@ -1,26 +1,26 @@
 import ContractInfo from "@/components/ContractInfo";
-
 import { fetchContracts } from "@/utils/request";
+import { authOptions } from "@/utils/authOptions";
+import { getServerSession } from "next-auth/next";
 
 const UserPanel = async () => {
-  // Manejamos el posible error de .map asegurando que sea un array
+  // 1. Obtenemos la sesión en el servidor
+  const session = await getServerSession(authOptions);
+
+  // 2. Si no hay sesión, no mostramos nada (o un mensaje)
+  if (!session) return null;
 
   const data: any = await fetchContracts();
-
-  // 1. Aseguramos que data.contracts sea un array
   const contractsArray = Array.isArray(data?.contracts) ? data.contracts : [];
 
-  // 2. Ordenamos por fecha de creación (de más nuevo a más viejo) y tomamos 3
   const recentContracts = [...contractsArray]
-    .sort((a, b) => {
-      const dateA = new Date(a.createdAt).getTime();
-      const dateB = new Date(b.createdAt).getTime();
-      return dateB - dateA; // El más reciente primero
-    })
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
     .slice(0, 3);
-  return (
-    // Quitamos el grid y el col-span de aquí
 
+  return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
       <div className="p-6 border-b border-slate-100">
         <h2 className="text-lg font-bold text-slate-800">
@@ -33,24 +33,26 @@ const UserPanel = async () => {
           <thead>
             <tr className="bg-slate-50/50 text-slate-500 uppercase text-[11px] tracking-wider font-semibold">
               <th className="px-6 py-4">Cliente / Contrato</th>
-
               <th className="px-6 py-4">Tipo</th>
-
               <th className="px-6 py-4">Emisión</th>
-
               <th className="px-6 py-4">Vencimiento</th>
-
               <th className="px-6 py-4 text-center">Estado</th>
-
               <th className="px-6 py-4 text-right">Acciones</th>
             </tr>
           </thead>
 
           <tbody className="divide-y divide-slate-100">
             {recentContracts.length === 0 ? (
-              <p className="text-center text-slate-500 col-span-3">
-                No contracts available at the moment.
-              </p>
+              // SOLUCIÓN AL ERROR DE HIDRATACIÓN:
+              // Usamos una fila real que ocupe las 6 columnas
+              <tr>
+                <td
+                  colSpan={6}
+                  className="px-6 py-10 text-center text-slate-500 italic"
+                >
+                  No hay contratos disponibles en este momento.
+                </td>
+              </tr>
             ) : (
               recentContracts.map((contract) => (
                 <ContractInfo key={contract._id} contract={contract} />

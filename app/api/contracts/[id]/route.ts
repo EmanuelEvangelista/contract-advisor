@@ -42,7 +42,7 @@ export const GET = async (request: NextRequest, { params }: Props) => {
     if (
       contract.studioId.toString() !== sessionUser.user.studioId?.toString()
     ) {
-      return null;
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     return NextResponse.json(contract);
