@@ -45,8 +45,10 @@ const AssigneeSelector = ({
 
   //cuando el padre se actualice, el selector también resetee sus estados de "guardado".
   useEffect(() => {
-    setSelectedOwner(currentOwnerId);
-    setSavedOwner(currentOwnerId);
+    if (currentOwnerId) {
+      setSelectedOwner(currentOwnerId);
+      setSavedOwner(currentOwnerId); // Esto hace que hasChanges sea FALSE de nuevo
+    }
   }, [currentOwnerId]);
 
   const handleSave = async () => {
@@ -65,7 +67,6 @@ const AssigneeSelector = ({
         setSavedOwner(selectedOwner); // Actualizamos el estado de "guardado"
         toast.success("Responsable actualizado correctamente");
         onUpdate();
-        router.refresh();
       } else {
         toast.error("Error al reasignar el contrato");
       }
@@ -78,6 +79,11 @@ const AssigneeSelector = ({
 
   // Verificamos si hay cambios pendientes para mostrar el botón
   const hasChanges = selectedOwner !== savedOwner;
+  console.log("AssigneeSelector renderizado", {
+    contractId,
+    currentOwnerId,
+    studioId,
+  });
 
   return (
     <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mt-6">

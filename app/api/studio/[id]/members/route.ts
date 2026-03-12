@@ -20,7 +20,7 @@ export const GET = async (request: NextRequest, { params }: Props) => {
     // Usamos cast explícito a 'any' para evitar que TS se queje del overload
     // y usamos un filtro que funcione tanto si es un ID único como si estuviera en un array
     const members = await User.find({
-      id: id as any,
+      studioId: id as any,
     })
       .select("_id username role email")
       .lean();

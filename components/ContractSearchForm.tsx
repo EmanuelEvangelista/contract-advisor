@@ -26,7 +26,7 @@ const ContractSearchForm = () => {
     if (!queryString) {
       router.push(`/contracts`);
     } else {
-      router.push(`/contracts/search-results?${queryString}`);
+      router.push(`/contracts/search?${queryString}`);
     }
   };
 
@@ -74,10 +74,11 @@ const ContractSearchForm = () => {
           onChange={(e) => setContractType(e.target.value)}
         >
           <option value="All">Todos los tipos</option>
-          <option value="Leasing">Leasing</option>
-          <option value="Compraventa">Compraventa</option>
-          <option value="Locacion">Locación</option>
-          <option value="Trabajo">Trabajo</option>
+          <option value="Parcelary">Leasing</option>
+          <option value="Leasing">Compraventa</option>
+          <option value="Harvesting">Locación</option>
+          <option value="Service">Trabajo</option>
+          <option value="Storage">Trabajo</option>
         </select>
       </div>
 

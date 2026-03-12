@@ -66,26 +66,32 @@ export type AgroDetailsForm = {
 // ===== MAIN FORM TYPE =====
 
 export type ContractFormType = {
-  studioId: string;
-  owner: string;
+  _id?: string;
+
+  studioId: any;
+  owner: any;
 
   contractName: string;
   contractType: ContractTypeEnum;
   status: ContractStatusEnum;
 
-  startDate: string; // "YYYY-MM-DD"
-  expiryDate: string; // "YYYY-MM-DD"
+  startDate: string;
+  expiryDate: string;
 
   contractor_details: PartyDetails;
   contractee_details: PartyDetails;
 
   paymentMethod: PaymentMethodEnum;
-  paymentDetails: PaymentDetailsForm;
+  paymentDetails?: PaymentDetailsForm;
 
-  agroDetails: AgroDetailsForm;
+  agroDetails?: AgroDetailsForm;
 
   assignedEmployee?: AssignedEmployeeForm;
 
-  pdfs?: File[];
+  pdfs?: string[];
+
   notes?: string;
+
+  createdAt?: string;
+  updatedAt?: string;
 };

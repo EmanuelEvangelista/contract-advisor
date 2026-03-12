@@ -42,7 +42,13 @@ export const GET = async (request: NextRequest, { params }: Props) => {
     if (
       contract.studioId.toString() !== sessionUser.user.studioId?.toString()
     ) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      console.error(
+        `Acceso denegado: Studio Contrato(${contract.studioId}) vs Usuario(${sessionUser.user.studioId})`,
+      );
+      return NextResponse.json(
+        { error: "No perteneces a este estudio" },
+        { status: 401 },
+      );
     }
 
     return NextResponse.json(contract);
@@ -83,7 +89,7 @@ export const DELETE = async (
       );
     }
 
-    if (contract.studioId !== sessionUser.userId) {
+    if (contract.studioId.toString() !== user.studioId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

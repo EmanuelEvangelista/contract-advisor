@@ -22,6 +22,7 @@ const SearchResultsPage = () => {
       setLoading(true);
       try {
         const data = await searchContracts({ keyword, employee, type });
+        console.log(data);
         setContracts(data);
       } catch (error) {
         console.error("Error fetching search results:", error);
@@ -110,8 +111,7 @@ const SearchResultsPage = () => {
             </Link>
           </div>
         ) : (
-          /* GRID CORREGIDA: gap amplio y w-full */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
+          <div>
             {contracts.map((contract) => (
               <ContractCard key={contract._id} contract={contract} />
             ))}

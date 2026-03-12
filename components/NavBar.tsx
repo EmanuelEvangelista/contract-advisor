@@ -103,38 +103,40 @@ const Navbar = () => {
                   Home
                 </Link>
               )}
-              <Link
-                href="/panel"
-                className={`${pathname === "/panel" ? "text-indigo-900 border-b-2 border-indigo-900" : "text-slate-400 hover:text-indigo-900"} 
-                pb-1 text-sm lg:text-base font-medium transition-all`}
-              >
-                Panel
-              </Link>
-              <Link
-                href="/profile"
-                className={`${pathname === "/profile" ? "text-indigo-900 border-b-2 border-indigo-900" : "text-slate-400 hover:text-indigo-900"} 
-                pb-1 text-sm lg:text-base font-medium transition-all`}
-              >
-                My Profile
-              </Link>
-              <Link
-                href="/contracts"
-                className={`${pathname === "/contracts" ? "text-indigo-900 border-b-2 border-indigo-900" : "text-slate-400 hover:text-indigo-900"} 
-                pb-1 text-sm lg:text-base font-medium transition-all`}
-              >
-                Contracts
-              </Link>
               {session && (
-                <Link
-                  href="/contracts/add"
-                  className={`${
-                    pathname === "/contracts/add"
-                      ? "bg-indigo-500 text-white"
-                      : "text-indigo-500 border border-indigo-200 hover:bg-indigo-50"
-                  } px-3 py-1.5 rounded-lg text-xs lg:text-sm font-bold transition-all whitespace-nowrap`}
-                >
-                  + Add Contract
-                </Link>
+                <>
+                  <Link
+                    href="/panel"
+                    className={`${pathname === "/panel" ? "text-indigo-900 border-b-2 border-indigo-900" : "text-slate-400 hover:text-indigo-900"} 
+                pb-1 text-sm lg:text-base font-medium transition-all`}
+                  >
+                    Panel
+                  </Link>
+                  <Link
+                    href="/profile"
+                    className={`${pathname === "/profile" ? "text-indigo-900 border-b-2 border-indigo-900" : "text-slate-400 hover:text-indigo-900"} 
+                pb-1 text-sm lg:text-base font-medium transition-all`}
+                  >
+                    My Profile
+                  </Link>
+                  <Link
+                    href="/contracts"
+                    className={`${pathname === "/contracts" ? "text-indigo-900 border-b-2 border-indigo-900" : "text-slate-400 hover:text-indigo-900"} 
+                pb-1 text-sm lg:text-base font-medium transition-all`}
+                  >
+                    Contracts
+                  </Link>
+                  <Link
+                    href="/contracts/add"
+                    className={`${
+                      pathname === "/contracts/add"
+                        ? "bg-indigo-500 text-white"
+                        : "text-indigo-500 border border-indigo-200 hover:bg-indigo-50"
+                    } px-3 py-1.5 rounded-lg text-xs lg:text-sm font-bold transition-all whitespace-nowrap`}
+                  >
+                    + Add Contract
+                  </Link>
+                </>
               )}
             </div>
           </div>
