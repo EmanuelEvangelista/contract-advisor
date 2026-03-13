@@ -18,7 +18,11 @@ export const GET = async (request: NextRequest, { params }: Props) => {
     const { id } = await params;
     const sessionUser = await getSessionUser();
 
-    if (!sessionUser || !sessionUser.userId) {
+    if (
+      !sessionUser ||
+      !sessionUser.userId ||
+      sessionUser.status === "inactive"
+    ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -73,7 +77,11 @@ export const DELETE = async (
     const { id: contractId } = await params;
     const sessionUser = await getSessionUser();
 
-    if (!sessionUser || !sessionUser.userId) {
+    if (
+      !sessionUser ||
+      !sessionUser.userId ||
+      sessionUser.status === "inactive"
+    ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -147,7 +155,11 @@ export const PUT = async (
     const sessionUser = await getSessionUser();
 
     // 1. Validación de Sesión
-    if (!sessionUser || !sessionUser.userId) {
+    if (
+      !sessionUser ||
+      !sessionUser.userId ||
+      sessionUser.status === "inactive"
+    ) {
       return NextResponse.json(
         { message: "User ID is required" },
         { status: 401 },

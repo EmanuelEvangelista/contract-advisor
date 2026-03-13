@@ -5,14 +5,14 @@ import User from "@/models/User";
 import { revalidatePath } from "next/cache";
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export const PATCH = async (request: NextRequest, { params }: Props) => {
   try {
     await connectDB();
 
-    const { id } = params;
+    const { id } = await params;
     const { status } = await request.json(); // read status from request body
 
     if (!status) {
@@ -23,6 +23,8 @@ export const PATCH = async (request: NextRequest, { params }: Props) => {
     }
 
     const sessionUser = await getSessionUser();
+
+    console.log("SessionUser:", sessionUser);
 
     if (!sessionUser || !sessionUser.userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -39,7 +41,7 @@ export const PATCH = async (request: NextRequest, { params }: Props) => {
     const user = await User.findById(id);
 
     if (!user) {
-      return new NextResponse("User not found", { status: 404 });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Prevent the admin from disabling their own account

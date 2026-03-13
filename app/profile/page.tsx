@@ -29,7 +29,6 @@ const ProfilePage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("aca entra", status);
     const fetchUserContracts = async () => {
       if (status !== "authenticated") {
         setContracts([]);
@@ -40,10 +39,7 @@ const ProfilePage = () => {
 
       setLoading(true);
       // Determinamos el ID a usar según el rol
-      const identifier =
-        profileRole === "accountant"
-          ? session?.user?.studioId
-          : session?.user?.id;
+      const identifier = session?.user?.id;
 
       if (!identifier) {
         setLoading(false);

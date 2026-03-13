@@ -22,7 +22,7 @@ export const GET = async (request: NextRequest, { params }: Props) => {
     const members = await User.find({
       studioId: id as any,
     })
-      .select("_id username role email")
+      .select("_id username role email status image")
       .lean();
 
     // Si tu esquema dice que studioId es un Array, pero vos guardás un solo ID,

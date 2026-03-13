@@ -2,8 +2,15 @@
 "use client";
 import Link from "next/link";
 import { FaPlus, FaFileAlt, FaCheckSquare, FaUser } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 
 const ActionPanel = () => {
+  const { data: session } = useSession();
+
+  if (!session) {
+    return null;
+  }
+
   return (
     <section className="flex flex-col gap-6">
       {/* Bloque 1: Botón de Acción Principal */}

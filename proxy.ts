@@ -6,6 +6,14 @@ export default withAuth(
     const { token } = req.nextauth;
     const { pathname } = req.nextUrl;
 
+    // Si el token existe y el status es 'inactive', no permitimos acceso a nada privado
+    if (token?.status === "inactive") {
+      // Si ya está en la home, lo dejamos, pero si intenta entrar a panel u onboarding, lo pateamos
+      if (pathname !== "/") {
+        return NextResponse.redirect(new URL("/", req.url));
+      }
+    }
+
     // 🔥 2. Logueado entrando al home
     if (token && pathname === "/") {
       return NextResponse.redirect(new URL("/panel", req.url));

@@ -20,6 +20,7 @@ import { useParams } from "next/navigation";
 import Spinner from "@/components/Spinner";
 import AssigneeSelector from "@/components/AssigneeSelector";
 import { useRouter } from "next/navigation";
+import ContractChat from "@/components/ContractChat";
 
 const ContractPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -60,7 +61,7 @@ const ContractPage = () => {
       const data = await fetchContract(id);
       setContract(data);
       window.scrollTo({ top: 0, behavior: "smooth" });
-      router.refresh(); // Esto limpia la caché del servidor
+      router.refresh();
     } catch (error) {
       console.error("Error al refrescar:", error);
     } finally {
@@ -90,7 +91,6 @@ const ContractPage = () => {
   return (
     <div className="min-h-screen bg-slate-100 pb-16">
       {/* TOP BAR */}
-
       <div className="bg-white border-b border-slate-200 sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link
@@ -339,6 +339,7 @@ const ContractPage = () => {
             <p className="text-sm text-amber-900">{contract.notes}</p>
           </section>
         )}
+        <ContractChat contractId={contract._id} />
         <AssigneeSelector
           contractId={contract._id!}
           currentOwnerId={contract.owner?._id || contract.owner}

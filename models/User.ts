@@ -38,7 +38,7 @@ const userSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "active"],
+      enum: ["pending", "active", "inactive"],
       default: "pending", // Pasa a 'active' cuando termina el Onboarding
     },
     // ID opcional para identificar al empleado internamente en el estudio

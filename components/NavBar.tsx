@@ -8,6 +8,7 @@ import { FaGoogle, FaBars, FaBell } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 import InviteCode from "./InviteCode";
+import UnreadMessageCount from "@/components/UnreadMessageCount";
 
 const Navbar = () => {
   const { data: session } = useSession();
@@ -65,9 +66,8 @@ const Navbar = () => {
     <nav className="bg-white fixed top-0 left-0 w-full z-50 backdrop-blur-md shadow-lg shadow-indigo-500/20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative flex h-20 items-center justify-between">
-          {/* 1. LADO IZQUIERDO: Logo y Nombre */}
+          {/* LEFT */}
           <div className="flex items-center flex-shrink-0">
-            {/* Mobile button - Ahora integrado en el flujo */}
             <button
               type="button"
               className="md:hidden mr-4 p-2 text-indigo-900 hover:bg-indigo-50 rounded-lg transition-colors"
@@ -78,7 +78,7 @@ const Navbar = () => {
 
             <Link className="flex items-center space-x-3" href="/">
               <Image
-                className="h-10 w-auto rounded-md" // Reducido un poco para dar aire
+                className="h-10 w-auto rounded-md"
                 src={logo}
                 alt="ContractAdviser"
                 priority
@@ -89,43 +89,57 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* 2. CENTRO: Navegación (Solo Desktop) */}
+          {/* CENTER */}
           <div className="hidden md:flex flex-1 justify-center px-4">
             <div className="flex items-center space-x-4 lg:space-x-8">
-              {" "}
-              {/* Espaciado adaptativo */}
               {!session && (
                 <Link
                   href="/"
-                  className={`${pathname === "/" ? "text-indigo-900 border-b-2 border-indigo-900" : "text-slate-400 hover:text-indigo-900"} 
-                pb-1 text-sm lg:text-base font-medium transition-all`}
+                  className={`${
+                    pathname === "/"
+                      ? "text-indigo-900 border-b-2 border-indigo-900"
+                      : "text-slate-400 hover:text-indigo-900"
+                  } pb-1 text-sm lg:text-base font-medium transition-all`}
                 >
                   Home
                 </Link>
               )}
+
               {session && (
                 <>
                   <Link
                     href="/panel"
-                    className={`${pathname === "/panel" ? "text-indigo-900 border-b-2 border-indigo-900" : "text-slate-400 hover:text-indigo-900"} 
-                pb-1 text-sm lg:text-base font-medium transition-all`}
+                    className={`${
+                      pathname === "/panel"
+                        ? "text-indigo-900 border-b-2 border-indigo-900"
+                        : "text-slate-400 hover:text-indigo-900"
+                    } pb-1 text-sm lg:text-base font-medium transition-all`}
                   >
                     Panel
                   </Link>
+
                   <Link
                     href="/profile"
-                    className={`${pathname === "/profile" ? "text-indigo-900 border-b-2 border-indigo-900" : "text-slate-400 hover:text-indigo-900"} 
-                pb-1 text-sm lg:text-base font-medium transition-all`}
+                    className={`${
+                      pathname === "/profile"
+                        ? "text-indigo-900 border-b-2 border-indigo-900"
+                        : "text-slate-400 hover:text-indigo-900"
+                    } pb-1 text-sm lg:text-base font-medium transition-all`}
                   >
                     My Profile
                   </Link>
+
                   <Link
                     href="/contracts"
-                    className={`${pathname === "/contracts" ? "text-indigo-900 border-b-2 border-indigo-900" : "text-slate-400 hover:text-indigo-900"} 
-                pb-1 text-sm lg:text-base font-medium transition-all`}
+                    className={`${
+                      pathname === "/contracts"
+                        ? "text-indigo-900 border-b-2 border-indigo-900"
+                        : "text-slate-400 hover:text-indigo-900"
+                    } pb-1 text-sm lg:text-base font-medium transition-all`}
                   >
                     Contracts
                   </Link>
+
                   <Link
                     href="/contracts/add"
                     className={`${
@@ -141,9 +155,8 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* 3. LADO DERECHO: Invite Code & Perfil */}
+          {/* RIGHT */}
           <div className="flex items-center space-x-3 lg:space-x-6 flex-shrink-0">
-            {/* Invite Code - Solo Desktop y solo para Accountants */}
             {role === "accountant" && (
               <div className="hidden lg:block">
                 <InviteCode />
@@ -166,7 +179,13 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="flex items-center space-x-4">
-                {/* Profile Dropdown */}
+                {/* 🔔 Notifications */}
+                <div className="relative flex items-center">
+                  <FaBell className="text-indigo-900 text-xl" />
+                  <UnreadMessageCount />
+                </div>
+
+                {/* Profile */}
                 <div className="relative" ref={profileMenuRef}>
                   <button
                     type="button"
@@ -177,8 +196,8 @@ const Navbar = () => {
                       className="h-10 w-10 rounded-full object-cover"
                       src={profileImage}
                       alt="User Profile"
-                      width={40}
-                      height={40}
+                      width={20}
+                      height={20}
                     />
                   </button>
 
@@ -189,12 +208,14 @@ const Navbar = () => {
                           {session.user?.email}
                         </p>
                       </div>
+
                       <Link
                         href="/profile"
                         className="block px-4 py-2 text-sm text-slate-700 hover:bg-indigo-50 transition"
                       >
                         Your Profile
                       </Link>
+
                       <button
                         onClick={() => signOut({ callbackUrl: "/" })}
                         className="block w-full text-left px-4 py-2 text-sm text-pink-600 hover:bg-pink-50 transition font-medium"
@@ -209,8 +230,6 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-
-      {/* Mobile Menu ... (mismo código que ya tenías) */}
     </nav>
   );
 };

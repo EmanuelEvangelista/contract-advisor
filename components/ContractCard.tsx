@@ -1,22 +1,63 @@
+"use client";
 import Link from "next/link";
 import {
   FaFileContract,
   FaCalendarAlt,
   FaUser,
   FaMapMarkerAlt,
+  FaEnvelope, // Importamos el ícono de mensaje
 } from "react-icons/fa";
+import { useState, useEffect } from "react";
 
 const ContractCard = ({ contract }: { contract: any }) => {
+  const [hasMessages, setHasMessages] = useState(false);
+
+  // Lógica para detectar si este contrato tiene mensajes no leídos
+  useEffect(() => {
+    const checkUnread = async () => {
+      try {
+        const res = await fetch("/api/messages/unread-contracts");
+        if (res.ok) {
+          const unreadIds = await res.json();
+          setHasMessages(unreadIds.includes(contract._id));
+        }
+      } catch (error) {
+        console.error("Error al checkear mensajes:", error);
+      }
+    };
+    checkUnread();
+  }, [contract._id]);
+
   // Formateo de fecha simple
   const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString("es-AR");
 
   return (
-    <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all mb-4 group cursor-pointer hover:border-blue-200">
+    <div
+      className={`relative bg-white p-5 rounded-2xl border shadow-sm hover:shadow-md transition-all mb-4 group cursor-pointer ${
+        hasMessages
+          ? "border-blue-500 bg-blue-50/20"
+          : "border-slate-100 hover:border-blue-200"
+      }`}
+    >
+      {/* SEÑAL DE MENSAJE NUEVO (Badge flotante) */}
+      {hasMessages && (
+        <div className="absolute -top-2.5 right-4 flex items-center gap-1 bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg animate-pulse z-10">
+          <FaEnvelope size={8} />
+          <span>Nuevo Mensaje</span>
+        </div>
+      )}
+
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         {/* Información Principal: Nombre y Cliente */}
         <div className="flex items-start gap-4 flex-1">
-          <div className="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
+          <div
+            className={`p-3 rounded-xl transition-colors ${
+              hasMessages
+                ? "bg-blue-600 text-white"
+                : "bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white"
+            }`}
+          >
             <FaFileContract size={20} />
           </div>
           <div>

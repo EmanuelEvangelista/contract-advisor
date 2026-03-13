@@ -1,15 +1,21 @@
 "use client";
 import { useState, useEffect } from "react";
 import EmployeeStatusCard from "@/components/EmployeeStatusCard";
+import { useSession } from "next-auth/react";
+import Spinner from "@/components/Spinner";
 
-const ManageEmployeesPage = ({ params }: { params: { studioId: string } }) => {
+const ManageEmployeesPage = () => {
+  const { data: session } = useSession();
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const studioId = session?.user?.studioId;
+
   useEffect(() => {
     const fetchEmployees = async () => {
+      if (!studioId) return;
       try {
-        const res = await fetch(`/api/studio/${params.studioId}/members`);
+        const res = await fetch(`/api/studio/${studioId}/members`);
         const data = await res.json();
         setEmployees(data);
       } catch (error) {
@@ -19,7 +25,11 @@ const ManageEmployeesPage = ({ params }: { params: { studioId: string } }) => {
       }
     };
     fetchEmployees();
-  }, [params.studioId]);
+  }, [session]);
+
+  if (!session) {
+    return null;
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -32,12 +42,19 @@ const ManageEmployeesPage = ({ params }: { params: { studioId: string } }) => {
           auditoría.
         </p>
       </header>
-
-      <div className="grid gap-4">
-        {employees.map((emp: any) => (
-          <EmployeeStatusCard key={emp._id} employee={emp} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="flex justify-center py-20">
+          <Spinner loading={loading} />
+        </div>
+      ) : (
+        <div className="grid gap-4">
+          {employees
+            .filter((emp: any) => emp.role === "employee") // Filtra solo los que tienen el rol de empleado
+            .map((emp: any) => (
+              <EmployeeStatusCard key={emp._id} employee={emp} />
+            ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -2,11 +2,18 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { FaUserCheck, FaUserSlash } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 
 const EmployeeStatusCard = ({ employee }: { employee: any }) => {
   // El estado inicial debe venir del prop 'status' del empleado
   const [isActive, setIsActive] = useState(employee.status === "active");
   const [loading, setLoading] = useState(false);
+
+  const { data: session } = useSession();
+
+  if (!session) {
+    return null;
+  }
 
   const toggleStatus = async () => {
     setLoading(true);

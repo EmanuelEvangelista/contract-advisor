@@ -1,23 +1,60 @@
 "use client";
+
 import {
   createContext,
   useContext,
+  useEffect,
   useState,
   Dispatch,
   SetStateAction,
-  PropsWithChildren,
 } from "react";
 
-interface GlobalContextType {}
-
-// Create a context
-const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
-// Create a provider
-export function GlobalProvider({ children }: PropsWithChildren) {
-  return <GlobalContext.Provider value={{}}>{children}</GlobalContext.Provider>;
+interface GlobalContextType {
+  unreadMessages: number;
+  refreshNotifications: () => void;
+  setUnreadMessages: Dispatch<SetStateAction<number>>;
 }
 
-// Create a custom hook to acces the context
+const GlobalContext = createContext<GlobalContextType | null>(null);
+
+export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
+  const [unreadMessages, setUnreadMessages] = useState(0);
+
+  const fetchUnread = async () => {
+    try {
+      const res = await fetch("/api/messages/unread-messages");
+      const data = await res.json();
+
+      setUnreadMessages(data.count);
+      console.log("aca deberia aparecer", data.count);
+    } catch (error) {
+      console.error("Error fetching unread messages:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUnread();
+
+    const interval = setInterval(() => {
+      fetchUnread();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <GlobalContext.Provider
+      value={{
+        unreadMessages,
+        refreshNotifications: fetchUnread,
+        setUnreadMessages,
+      }}
+    >
+      {children}
+    </GlobalContext.Provider>
+  );
+};
+
 export const useGlobalContext = () => {
   const context = useContext(GlobalContext);
 

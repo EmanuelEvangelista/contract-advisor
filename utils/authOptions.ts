@@ -12,6 +12,7 @@ declare module "next-auth" {
       image?: string | null;
       role?: string | null;
       studioId?: string | null;
+      status?: string | null;
     };
   }
 }
@@ -21,6 +22,7 @@ declare module "next-auth/jwt" {
     id?: string;
     role?: string | null;
     studioId?: string | null;
+    status?: string | null;
   }
 }
 
@@ -52,6 +54,11 @@ export const authOptions: NextAuthOptions = {
         email: googleProfile.email,
       });
 
+      if (userExists && userExists.status === "inactive") {
+        // Este mensaje es el que aparecerá en la URL ?error=...
+        throw new Error("Your account has been deactivated.");
+      }
+
       if (!userExists) {
         const username = googleProfile.name?.slice(0, 20);
 
@@ -74,9 +81,14 @@ export const authOptions: NextAuthOptions = {
         const dbUser = await User.findOne({ email: user.email });
 
         if (dbUser) {
+          if (dbUser.status === "inactive") {
+            throw new Error("Inactive user");
+          }
+
           token.id = dbUser._id.toString();
           token.studioId = dbUser.studioId ? dbUser.studioId.toString() : null;
           token.role = dbUser.role || null;
+          token.status = dbUser.status || "active";
         }
       }
 
@@ -87,6 +99,7 @@ export const authOptions: NextAuthOptions = {
         if (dbUser) {
           token.studioId = dbUser.studioId ? dbUser.studioId.toString() : null;
           token.role = dbUser.role || null;
+          token.status = dbUser.status || "active";
         }
       }
 
@@ -99,8 +112,13 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.studioId = token.studioId;
         session.user.role = token.role;
+        session.user.status = token.status;
       }
       return session;
     },
+  },
+  pages: {
+    signIn: "/login",
+    error: "/login",
   },
 };
