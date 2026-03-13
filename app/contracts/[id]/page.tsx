@@ -46,6 +46,28 @@ const ContractPage = () => {
     fetchContractData();
   }, [id]);
 
+  useEffect(() => {
+    const markAsRead = async () => {
+      if (!id) return;
+
+      try {
+        await fetch("/api/messages/mark-as-read", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contractId: id }),
+        });
+
+        // Esto refresca los datos del servidor para que la campana
+        // del Navbar se entere de que ya no hay mensajes nuevos
+        router.refresh();
+      } catch (error) {
+        console.error("Error marking messages as read:", error);
+      }
+    };
+
+    markAsRead();
+  }, [id, router]);
+
   if (loading) return <Spinner loading={loading} />;
 
   if (!contract)
@@ -339,7 +361,7 @@ const ContractPage = () => {
             <p className="text-sm text-amber-900">{contract.notes}</p>
           </section>
         )}
-        <ContractChat contractId={contract._id} />
+        <ContractChat contract={contract} />
         <AssigneeSelector
           contractId={contract._id!}
           currentOwnerId={contract.owner?._id || contract.owner}

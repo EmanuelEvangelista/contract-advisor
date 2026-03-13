@@ -181,8 +181,10 @@ const Navbar = () => {
               <div className="flex items-center space-x-4">
                 {/* 🔔 Notifications */}
                 <div className="relative flex items-center">
-                  <FaBell className="text-indigo-900 text-xl" />
-                  <UnreadMessageCount />
+                  <Link href="/contracts">
+                    <FaBell className="text-indigo-900 text-xl" />
+                    <UnreadMessageCount />
+                  </Link>
                 </div>
 
                 {/* Profile */}

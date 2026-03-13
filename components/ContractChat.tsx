@@ -2,14 +2,16 @@
 import { useEffect, useState } from "react";
 import { useGlobalContext } from "@/context/GlobalContext";
 import Image from "next/image";
+import { ContractFormType } from "@/types/contract";
+import { useSession } from "next-auth/react";
 
-interface Props {
-  contractId: string | null;
-}
-
-const ContractChat = ({ contractId }: Props) => {
+const ContractChat = ({ contract }: ContractFormType) => {
   const [messages, setMessages] = useState<any[]>([]);
   const [text, setText] = useState("");
+
+  const { data: session } = useSession();
+
+  const contractId = contract._id;
 
   const { refreshNotifications } = useGlobalContext();
 
@@ -27,13 +29,22 @@ const ContractChat = ({ contractId }: Props) => {
   const sendMessage = async () => {
     if (!text || !contractId) return;
 
+    const recipientId =
+      session?.user?.id === contract.owner
+        ? contract.assignedEmployee._id
+        : contract.owner;
+
     try {
       await fetch(`/api/contracts/${contractId}/messages`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({
+          contractId: contractId,
+          text,
+          recipientId: recipientId, // 👈 Enviamos el ID correcto
+        }),
       });
 
       setText("");

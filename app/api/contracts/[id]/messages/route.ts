@@ -9,9 +9,7 @@ type Props = {
 
 export const GET = async (request: NextRequest, { params }: Props) => {
   await connectDB();
-
   const { id } = await params;
-
   const sessionUser = await getSessionUser();
 
   if (
@@ -26,10 +24,12 @@ export const GET = async (request: NextRequest, { params }: Props) => {
     .populate("sender", "username image")
     .sort({ createdAt: 1 });
 
+  // Marcamos como leídos los mensajes que recibiste tú en este contrato
   await Message.updateMany(
     {
       contract: id,
-      sender: { $ne: sessionUser.userId },
+      recipient: sessionUser.userId, // Usamos recipient para ser precisos
+      read: false,
     },
     { read: true },
   );
@@ -38,28 +38,43 @@ export const GET = async (request: NextRequest, { params }: Props) => {
 };
 
 export const POST = async (request: NextRequest, { params }: Props) => {
-  await connectDB();
+  try {
+    await connectDB();
+    const { id } = await params; // Este es el ID del contrato que viene en la URL
+    const sessionUser = await getSessionUser();
 
-  const { id } = await params;
+    if (
+      !sessionUser ||
+      !sessionUser.userId ||
+      sessionUser.status === "inactive"
+    ) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const sessionUser = await getSessionUser();
+    const { text, recipientId } = await request.json();
 
-  if (
-    !sessionUser ||
-    !sessionUser.userId ||
-    sessionUser.status === "inactive"
-  ) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Validación de seguridad
+    if (!text || !recipientId) {
+      return NextResponse.json(
+        { error: "Faltan datos requeridos" },
+        { status: 400 },
+      );
+    }
+
+    const message = await Message.create({
+      sender: sessionUser.userId,
+      recipient: recipientId,
+      contract: id, // Usamos el ID de los params para evitar errores
+      text: text,
+      read: false,
+    });
+
+    return NextResponse.json(message, { status: 201 });
+  } catch (error) {
+    console.error("Error en POST Message:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
-
-  const { text } = await request.json();
-
-  const message = await Message.create({
-    contract: id,
-    sender: sessionUser?.userId,
-    text,
-    read: false,
-  });
-
-  return NextResponse.json(message);
 };
