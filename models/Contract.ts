@@ -138,6 +138,10 @@ const contractSchema = new Schema(
       type: String,
       trim: true,
     },
+    expiryNotificationSent: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

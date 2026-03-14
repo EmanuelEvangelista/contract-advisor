@@ -2,6 +2,7 @@ import StatCard from "@/components/StateCard";
 import { fetchContracts } from "@/utils/request";
 import { getSessionUser } from "@/utils/getSessionUser";
 import Link from "next/link";
+import ExpiryTestButton from "@/components/ExpiryTestButton";
 
 const ContractsState = async () => {
   // 1. Obtenemos el usuario de la sesión para filtrar las estadísticas
@@ -85,6 +86,11 @@ const ContractsState = async () => {
             color="bg-emerald-500" // Verde/Esmeralda
           />
         </Link>
+        {sessionUser?.user?.email === "demo@contractadvisor.com" && (
+          <div className="fixed bottom-6 right-6 w-64">
+            <ExpiryTestButton />
+          </div>
+        )}
       </div>
     </section>
   );

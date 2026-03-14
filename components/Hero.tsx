@@ -1,7 +1,25 @@
-import Link from "next/link";
-import { FaShieldAlt, FaChartLine, FaFileSignature } from "react-icons/fa";
+"use client";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import {
+  FaShieldAlt,
+  FaChartLine,
+  FaFileSignature,
+  FaArrowRight,
+} from "react-icons/fa";
 
 const Hero = () => {
+  const [loading, setLoading] = useState<string | null>(null);
+
+  const handleLogin = async (email: string, role: string) => {
+    setLoading(role);
+    await signIn("credentials", {
+      email: email,
+      password: "password123",
+      callbackUrl: "/panel",
+    });
+  };
+
   return (
     <>
       {/* Hero Content */}
@@ -19,14 +37,33 @@ const Hero = () => {
             ease. The all-in-one platform for modern producers and contractors.
           </p>
 
-          <div className="flex items-center gap-4">
-            <Link
-              href="/login"
-              className="bg-slate-900 hover:bg-black text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-2xl shadow-slate-200 flex items-center gap-2"
+          {/* --- BOTONERA DE DEMO --- */}
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <button
+              onClick={() =>
+                handleLogin("demo-reclutador@contractadvisor.com", "accountant")
+              }
+              disabled={!!loading}
+              className="group w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-blue-500/20 flex items-center justify-center gap-3 active:scale-95 disabled:opacity-70"
             >
-              Get Started Now
-            </Link>
+              {loading === "accountant" ? "Entrando..." : "Demo Contador"}
+              <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+            </button>
+
+            <button
+              onClick={() =>
+                handleLogin("employee-demo@contractadvisor.com", "employee")
+              }
+              disabled={!!loading}
+              className="w-full sm:w-auto bg-slate-900 hover:bg-black text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-slate-900/10 flex items-center justify-center gap-3 active:scale-95 disabled:opacity-70"
+            >
+              {loading === "employee" ? "Entrando..." : "Demo Empleado"}
+            </button>
           </div>
+
+          <p className="text-xs text-slate-400 italic">
+            * Acceso instantáneo sin registro. Prueba las funciones ahora.
+          </p>
 
           {/* Mini Features */}
           <div className="grid grid-cols-3 gap-6 pt-8 border-t border-slate-200">
@@ -51,7 +88,7 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Lado Derecho: Imagen o Decoración */}
+        {/* Lado Derecho */}
         <div className="hidden lg:flex justify-center relative">
           <div className="absolute inset-0 bg-blue-400/10 blur-3xl rounded-full"></div>
           <div className="relative bg-white p-8 rounded-[40px] shadow-2xl border border-slate-100 rotate-3 hover:rotate-0 transition-transform duration-500">

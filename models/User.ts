@@ -3,10 +3,10 @@ import { Schema, model, models, Model } from "mongoose";
 export interface IUser {
   email: string;
   username: string;
-  name: string;
+  password?: string; // 👈 Agregado para el login de Pedro y Juan
   image?: string;
   role: string;
-  studioId: Schema.Types.ObjectId[];
+  studioId: string | null; // Simplificado a string para que coincida con el Schema
   status: string;
   employeeId: string;
 }
@@ -22,32 +22,34 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Username is required"],
     },
-    image: {
-      type: String, // Para guardar la foto de perfil de Google
+    password: {
+      // 👈 Agregado al Schema
+      type: String,
+      required: false, // Opcional porque Google no lo usa
     },
-    // --- CAMPOS PARA MULTI-TENANCY ---
+    image: {
+      type: String,
+    },
     role: {
       type: String,
       enum: ["accountant", "employee"],
-      // No ponemos default aquí para obligar al Onboarding a definirlo
     },
     studioId: {
       type: String,
       ref: "Studio",
-      default: null, // Se llena en el Onboarding
+      default: null,
     },
     status: {
       type: String,
       enum: ["pending", "active", "inactive"],
-      default: "pending", // Pasa a 'active' cuando termina el Onboarding
+      default: "pending",
     },
-    // ID opcional para identificar al empleado internamente en el estudio
     employeeId: {
       type: String,
     },
   },
   {
-    timestamps: true, // Nos da createdAt y updatedAt automáticamente
+    timestamps: true,
   },
 );
 

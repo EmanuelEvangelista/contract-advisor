@@ -1,3 +1,4 @@
+"use client";
 import {
   FaCloudUploadAlt,
   FaLock,
@@ -50,7 +51,7 @@ const FeaturedContracts = () => {
   return (
     <section className="bg-white py-24 px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header de la sección */}
+        {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-blue-600 font-bold uppercase tracking-widest text-sm mb-3">
             Platform Benefits
@@ -62,7 +63,7 @@ const FeaturedContracts = () => {
         </div>
 
         {/* Grid de Features */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {features.map((feature, index) => (
             <div
               key={index}
@@ -79,6 +80,20 @@ const FeaturedContracts = () => {
               </p>
             </div>
           ))}
+        </div>
+
+        {/* CTA Section - Diseño Limpio */}
+        <div className="bg-slate-900 rounded-[40px] p-8 md:p-16 text-center relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 blur-[100px] rounded-full -mr-20 -mt-20"></div>
+          <div className="relative z-10">
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              Ready to modernize your operations?
+            </h3>
+            <p className="text-slate-400 mb-0 max-w-lg mx-auto">
+              Use the demo buttons above to explore how our automated
+              notifications and role management work in real-time.
+            </p>
+          </div>
         </div>
       </div>
     </section>

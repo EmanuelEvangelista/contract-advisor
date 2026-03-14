@@ -22,9 +22,7 @@ export async function GET() {
       );
     }
 
-    const studio = await Studio.findOne({
-      adminEmail: session.user.email,
-    });
+    const studio = await Studio.findById(session.user.studioId);
 
     if (!studio) {
       return NextResponse.json(

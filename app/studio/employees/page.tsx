@@ -27,7 +27,7 @@ const ManageEmployeesPage = () => {
     fetchEmployees();
   }, [session]);
 
-  if (!session) {
+  if (!session || session.user.role === "employee") {
     return null;
   }
 

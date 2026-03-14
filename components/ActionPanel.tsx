@@ -3,9 +3,19 @@
 import Link from "next/link";
 import { FaPlus, FaFileAlt, FaCheckSquare, FaUser } from "react-icons/fa";
 import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 const ActionPanel = () => {
   const { data: session } = useSession();
+
+  const role = session?.user.role === "accountant";
+
+  useEffect(() => {
+    if (session?.user) {
+      // 👈 La lógica condicional va ADENTRO del Hook
+      fetch("/api/cron/check-expiry");
+    }
+  }, [session?.user]);
 
   if (!session) {
     return null;
@@ -28,21 +38,23 @@ const ActionPanel = () => {
       </div>
 
       {/* Bloque 2: Gestión de Personal (Solo visible para contador según tu lógica) */}
-      <div className="bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-800">
-        <h3 className="text-[10px] font-black text-slate-500 mb-4 tracking-[0.15em] uppercase">
-          Administración
-        </h3>
-        <Link
-          href={"/studio/employees"}
-          className="w-full bg-slate-800 hover:bg-slate-700 text-slate-100 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-95 border border-slate-700"
-        >
-          <FaUser className="text-indigo-400" size={16} />
-          Gestionar Personal
-        </Link>
-        <p className="text-[10px] text-slate-500 mt-3 text-center italic">
-          Acceso exclusivo para Contadores
-        </p>
-      </div>
+      {role && (
+        <div className="bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-800">
+          <h3 className="text-[10px] font-black text-slate-500 mb-4 tracking-[0.15em] uppercase">
+            Administración
+          </h3>
+          <Link
+            href={"/studio/employees"}
+            className="w-full bg-slate-800 hover:bg-slate-700 text-slate-100 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-95 border border-slate-700"
+          >
+            <FaUser className="text-indigo-400" size={16} />
+            Gestionar Personal
+          </Link>
+          <p className="text-[10px] text-slate-500 mt-3 text-center italic">
+            Acceso exclusivo para Contadores
+          </p>
+        </div>
+      )}
 
       {/* Bloque 3: Plantillas Recientes */}
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">

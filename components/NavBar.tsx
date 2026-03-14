@@ -165,17 +165,15 @@ const Navbar = () => {
 
             {!session ? (
               <div className="flex items-center">
-                {providers &&
-                  Object.values(providers).map((provider, index) => (
-                    <button
-                      key={index}
-                      onClick={() => signIn(provider.id)}
-                      className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all"
-                    >
-                      <FaGoogle />
-                      <span className="hidden sm:inline">Login</span>
-                    </button>
-                  ))}
+                {providers?.google && (
+                  <button
+                    onClick={() => signIn("google")}
+                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all"
+                  >
+                    <FaGoogle />
+                    <span className="hidden sm:inline">Login</span>
+                  </button>
+                )}
               </div>
             ) : (
               <div className="flex items-center space-x-4">
