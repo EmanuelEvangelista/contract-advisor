@@ -10,8 +10,6 @@ import {
   FaFilePdf,
   FaExternalLinkAlt,
   FaMoneyBillWave,
-  FaTrashAlt,
-  FaEdit,
   FaClock,
 } from "react-icons/fa";
 import { useState, useEffect } from "react";
@@ -21,6 +19,7 @@ import Spinner from "@/components/Spinner";
 import AssigneeSelector from "@/components/AssigneeSelector";
 import { useRouter } from "next/navigation";
 import ContractChat from "@/components/ContractChat";
+import ContractAction from "@/components/ContractAction";
 
 const ContractPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -123,16 +122,11 @@ const ContractPage = () => {
           </Link>
 
           <div className="flex gap-3">
-            <Link
-              href={`/contracts/${id}/edit`}
-              className="p-2 rounded-lg hover:bg-slate-100"
-            >
-              <FaEdit />
-            </Link>
-
-            <button className="p-2 rounded-lg text-red-500 hover:bg-red-50">
-              <FaTrashAlt />
-            </button>
+            <ContractAction
+              contractId={id}
+              contractOwner={contract.owner}
+              contract={contract}
+            />
           </div>
         </div>
       </div>

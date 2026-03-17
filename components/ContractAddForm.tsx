@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+
 import {
   FaFileContract,
   FaUserFriends,
@@ -9,10 +10,16 @@ import {
   FaCloudUploadAlt,
   FaStickyNote,
 } from "react-icons/fa";
+
 import { ContractFormType } from "@/types/contract";
 
-// 1. Estado inicial fuera para poder reutilizarlo al resetear
-const initialState: any = {
+interface ContractFormState extends Omit<ContractFormType, "pdfs"> {
+  pdfs: (File | string)[];
+}
+
+const initialState: ContractFormState = {
+  studioId: "",
+  owner: null,
   contractName: "",
   contractType: "Parcelary",
   status: "Active",
@@ -24,11 +31,8 @@ const initialState: any = {
   paymentDetails: {
     amount: 0,
     currency: "USD",
-    commodity: "",
-    quantity: 0,
-    unit: "Tons",
-    frequency: "Annual",
     quintalsPerHa: 0,
+    frequency: "Annual",
   },
   agroDetails: {
     area: "",
@@ -38,61 +42,22 @@ const initialState: any = {
     equipmentModel: "",
     insuranceIncluded: false,
   },
+  assignedEmployee: {
+    employeeId: "",
+    name: "",
+    email: "",
+    role: "",
+  },
   pdfs: [],
   notes: "",
 };
 
 const ContractAddForm = () => {
-  const [fields, setFields] = useState<ContractFormType>({
-    studioId: "", // Se llenará en el backend o vía props
-    owner: "",
-    contractName: "",
-    contractType: "Parcelary",
-    status: "Active",
-    startDate: "",
-    expiryDate: "",
-    contractor_details: {
-      name: "",
-      email: "",
-      phone: "",
-    },
-    contractee_details: {
-      name: "",
-      email: "",
-      phone: "",
-    },
-    paymentMethod: "Cash",
-    paymentDetails: {
-      amount: 0,
-      currency: "USD",
-      commodity: "",
-      quantity: 0,
-      unit: "Tons",
-      frequency: "Annual",
-      // NUEVOS CAMPOS PARA EL CÁLCULO
-      quintalsPerHa: 0,
-    },
-    agroDetails: {
-      area: "",
-      location: "",
-      cropType: "Soybean",
-      parcelId: "",
-      equipmentModel: "",
-      insuranceIncluded: false,
-    },
-    assignedEmployee: {
-      employeeId: "",
-      name: "",
-      email: "",
-      role: "",
-    },
-    pdfs: [],
-    notes: "",
-  });
+  const [fields, setFields] = useState<ContractFormState>(
+    initialState as ContractFormState,
+  );
   const [loading, setLoading] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
-
-  const [employees, setEmployees] = useState([]); // Para el select de empleados
 
   // Simulación de carga de empleados (Aquí harías tu fetch a /api/studio/employees)
   useEffect(() => {
@@ -100,22 +65,26 @@ const ContractAddForm = () => {
   }, []);
 
   useEffect(() => {
-    // Calculamos el total
-    const totalAmount =
-      Number(fields.agroDetails.area) *
-      (fields.paymentDetails.quintalsPerHa || 0);
+    // 1. Calculamos el valor y lo guardamos en 'totalCalculated'
+    const totalCalculated =
+      Number(fields?.agroDetails?.area || 0) *
+      (fields?.paymentDetails?.quintalsPerHa || 0);
 
-    // Solo actualizamos si el valor cambió para evitar loops infinitos
-    if (totalAmount !== fields.paymentDetails.amount) {
+    // 2. Solo actualizamos si el total cambió
+    if (totalCalculated !== fields?.paymentDetails?.amount) {
       setFields((prev) => ({
         ...prev,
         paymentDetails: {
+          // Mantén todo lo que ya tenía paymentDetails (currency, frequency, etc.)
           ...prev.paymentDetails,
-          amount: totalAmount,
-        },
+          // Actualiza solo el amount con el nuevo cálculo
+          amount: totalCalculated,
+          // Como frequency es obligatorio en tu tipo, nos aseguramos de que esté
+          frequency: prev.paymentDetails?.frequency || "Annual",
+        } as any,
       }));
     }
-  }, [fields.agroDetails.area, fields.paymentDetails.quintalsPerHa]);
+  }, [fields?.agroDetails?.area, fields?.paymentDetails?.quintalsPerHa]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -161,7 +130,7 @@ const ContractAddForm = () => {
     formData.append("data", JSON.stringify(fields));
 
     if (fields.pdfs) {
-      fields.pdfs.forEach((file: File) => {
+      fields.pdfs.forEach((file) => {
         formData.append("file", file);
       });
     }
@@ -213,10 +182,13 @@ const ContractAddForm = () => {
         </h2>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
-            <label className={labelStyle}>Contract Name</label>
+            <label htmlFor="contractName" className={labelStyle}>
+              Contract Name
+            </label>
             <input
-              type="text"
+              id="contractName"
               name="contractName"
+              type="text"
               value={fields.contractName}
               onChange={handleChange}
               className={inputStyle}
@@ -370,7 +342,7 @@ const ContractAddForm = () => {
             <input
               type="text"
               name="agroDetails.location"
-              value={fields.agroDetails.location}
+              value={fields?.agroDetails?.location}
               onChange={handleChange}
               placeholder="City, State, Plot number"
               className={inputStyle}
@@ -382,7 +354,7 @@ const ContractAddForm = () => {
             <input
               type="number"
               name="agroDetails.area"
-              value={fields.agroDetails.area}
+              value={fields?.agroDetails?.area}
               onChange={handleChange}
               placeholder="e.g. 150"
               className={inputStyle}
@@ -393,7 +365,7 @@ const ContractAddForm = () => {
             <label className={labelStyle}>Main Crop</label>
             <select
               name="agroDetails.cropType"
-              value={fields.agroDetails.cropType}
+              value={fields?.agroDetails?.cropType}
               onChange={handleChange}
               className={inputStyle}
             >
@@ -406,7 +378,7 @@ const ContractAddForm = () => {
             <input
               type="checkbox"
               name="agroDetails.insuranceIncluded"
-              checked={fields.agroDetails.insuranceIncluded}
+              checked={fields?.agroDetails?.insuranceIncluded}
               onChange={handleChange}
               className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
               id="insurance"
@@ -454,7 +426,7 @@ const ContractAddForm = () => {
                 <label className={labelStyle}>Commodity</label>
                 <select
                   name="paymentDetails.commodity"
-                  value={fields.paymentDetails.commodity}
+                  value={fields?.paymentDetails?.commodity}
                   onChange={handleChange}
                   className={inputStyle}
                   required
@@ -474,7 +446,7 @@ const ContractAddForm = () => {
                   <input
                     type="number"
                     name="paymentDetails.quantity"
-                    value={fields.paymentDetails.quantity}
+                    value={fields?.paymentDetails?.quantity}
                     onChange={handleChange}
                     placeholder="Qty"
                     className={inputStyle}
@@ -485,7 +457,7 @@ const ContractAddForm = () => {
                   <label className={labelStyle}>Unit</label>
                   <select
                     name="paymentDetails.unit"
-                    value={fields.paymentDetails.unit}
+                    value={fields?.paymentDetails?.unit}
                     onChange={handleChange}
                     className={inputStyle}
                   >
@@ -503,7 +475,7 @@ const ContractAddForm = () => {
                 <input
                   type="number"
                   name="paymentDetails.quintalsPerHa"
-                  value={fields.paymentDetails.quintalsPerHa}
+                  value={fields?.paymentDetails?.quintalsPerHa}
                   onChange={handleChange}
                   className={inputStyle}
                   placeholder="0"
@@ -518,7 +490,7 @@ const ContractAddForm = () => {
                   <input
                     type="number"
                     name="paymentDetails.amount"
-                    value={fields.paymentDetails.amount}
+                    value={fields?.paymentDetails?.amount}
                     readOnly
                     className="bg-transparent text-xl font-black text-indigo-700 outline-none w-full"
                   />
@@ -528,7 +500,7 @@ const ContractAddForm = () => {
                 <label className={labelStyle}>Currency</label>
                 <select
                   name="paymentDetails.currency"
-                  value={fields.paymentDetails.currency}
+                  value={fields?.paymentDetails?.currency}
                   onChange={handleChange}
                   className={inputStyle}
                 >
@@ -544,7 +516,7 @@ const ContractAddForm = () => {
             <label className={labelStyle}>Frequency</label>
             <select
               name="paymentDetails.frequency"
-              value={fields.paymentDetails.frequency}
+              value={fields?.paymentDetails?.frequency}
               onChange={handleChange}
               className={inputStyle}
             >
@@ -584,7 +556,9 @@ const ContractAddForm = () => {
                 <span className="text-indigo-600 font-bold">
                   {/* Si hay 1 solo, muestra el nombre. Si hay varios, muestra la cantidad */}
                   {fields.pdfs.length === 1
-                    ? fields.pdfs[0].name
+                    ? fields.pdfs[0] instanceof File
+                      ? fields.pdfs[0].name
+                      : "Archivo cargado"
                     : `${fields.pdfs.length} files selected`}
                 </span>
               ) : (
@@ -607,7 +581,7 @@ const ContractAddForm = () => {
                   className="flex items-center justify-between bg-slate-50 border border-slate-200 px-3 py-2 rounded-lg"
                 >
                   <span className="text-xs text-slate-500 truncate max-w-[250px] italic">
-                    {file.name}
+                    {file instanceof File ? file.name : "Documento guardado"}
                   </span>
                   <button
                     type="button"
@@ -640,7 +614,8 @@ const ContractAddForm = () => {
         </button>
         <button
           type="submit"
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-12 py-4 rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all active:scale-95 flex items-center gap-2"
+          disabled={!fields.contractName.trim()}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-12 py-4 rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Save Contract
         </button>

@@ -3,10 +3,10 @@ import { Schema, model, models, Model } from "mongoose";
 export interface IUser {
   email: string;
   username: string;
-  password?: string; // 👈 Agregado para el login de Pedro y Juan
+  password?: string;
   image?: string;
-  role: string;
-  studioId: string | null; // Simplificado a string para que coincida con el Schema
+  role: string | null;
+  studioId: string | null;
   status: string;
   employeeId: string;
 }
@@ -23,9 +23,8 @@ const userSchema = new Schema(
       required: [true, "Username is required"],
     },
     password: {
-      // 👈 Agregado al Schema
       type: String,
-      required: false, // Opcional porque Google no lo usa
+      required: false,
     },
     image: {
       type: String,
@@ -33,6 +32,7 @@ const userSchema = new Schema(
     role: {
       type: String,
       enum: ["accountant", "employee"],
+      default: null,
     },
     studioId: {
       type: String,

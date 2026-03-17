@@ -16,6 +16,7 @@ import {
 import ContractPdfs from "@/components/ContractPdfs";
 import ContractActions from "@/components/ContractAction";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const ContractDetails = ({ contract }: { contract: any }) => {
   const router = useRouter();
@@ -31,12 +32,14 @@ const ContractDetails = ({ contract }: { contract: any }) => {
     // Esto refresca los Server Components en Next.js 13/14/15
     router.refresh();
   };
+
   return (
     <div className="bg-slate-50 min-h-screen p-4 md:p-8">
       {/* ACCIONES FLOTANTES O SUPERIORES */}
       <ContractActions
         contractId={contract._id}
         contractOwner={contract.owner?._id || contract.owner}
+        contract={contract}
       />
 
       <div className="max-w-5xl mx-auto space-y-6">

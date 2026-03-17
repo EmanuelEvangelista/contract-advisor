@@ -23,7 +23,11 @@ export const PATCH = async (request: NextRequest, { params }: Props) => {
     }
 
     const sessionUser = await getSessionUser();
-    if (!sessionUser || !sessionUser.userId) {
+    if (
+      !sessionUser ||
+      !sessionUser.userId ||
+      sessionUser.role !== "accountant"
+    ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -39,7 +43,7 @@ export const PATCH = async (request: NextRequest, { params }: Props) => {
         owner: newOwnerId,
         assignedEmployee: {
           employeeId: newUser._id.toString(),
-          name: newUser.name || newUser.username,
+          name: newUser.username || newUser.username,
           email: newUser.email,
           role: newUser.role,
         },

@@ -1,28 +1,25 @@
-import connectDB from "@/config/database";
+import User from "@/models/User";
 import Message from "@/models/Message";
 import { getSessionUser } from "@/utils/getSessionUser";
-import { NextResponse } from "next/server";
-
-export const dynamic = "force-dynamic";
 
 export const GET = async () => {
   try {
-    await connectDB();
     const sessionUser = await getSessionUser();
+    if (!sessionUser) return new Response("Unauthorized", { status: 401 });
 
-    if (!sessionUser || !sessionUser.userId) {
-      return NextResponse.json([], { status: 401 });
-    }
+    // 1. Obtener el ID de Mongo usando el email de la sesión
+    const user = await User.findOne({ email: sessionUser.user.email });
+    if (!user) return new Response("User not found", { status: 404 });
 
-    // Obtenemos un array de IDs de contratos que tienen mensajes sin leer para este usuario
+    // 2. Usar user._id (que es un ObjectId válido)
     const unreadContractIds = await Message.distinct("contract", {
-      recipient: sessionUser.userId,
+      recipient: user._id,
       read: false,
     });
 
-    return NextResponse.json(unreadContractIds, { status: 200 });
+    return new Response(JSON.stringify(unreadContractIds), { status: 200 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json([], { status: 500 });
+    return new Response("Server Error", { status: 500 });
   }
 };

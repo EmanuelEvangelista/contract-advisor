@@ -72,7 +72,8 @@ async function deleteContract(id: string): Promise<boolean> {
     });
 
     if (!res.ok) {
-      throw new Error("Failed to delete contract");
+      console.error(`Error fetching contract ${id}: Status ${res.status}`);
+      throw new Error(`Failed to fetch data: ${res.statusText}`);
     }
 
     return true; // Si todo salió bien, devolvemos true

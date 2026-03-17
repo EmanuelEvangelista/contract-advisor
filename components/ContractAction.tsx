@@ -4,10 +4,12 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { ContractFormType } from "@/types/contract";
 
 interface Props {
   contractId: string;
   contractOwner: string;
+  contract: ContractFormType;
 }
 
 const ContractAction = ({ contractId, contractOwner }: Props) => {
@@ -18,8 +20,10 @@ const ContractAction = ({ contractId, contractOwner }: Props) => {
   const role = user?.role;
   const userId = user?.id;
 
-  console.log("userId:", userId);
-  console.log("owner:", contractOwner);
+  const canManage =
+    session?.user?.id === contractOwner ||
+    session?.user?.role === "accountant" ||
+    session?.user?.role === "employee";
 
   if (role === "employee" && userId != contractOwner) return null;
 
@@ -36,7 +40,7 @@ const ContractAction = ({ contractId, contractOwner }: Props) => {
 
       if (res.status === 200) {
         toast.success("Contract deleted successfully");
-        router.push("/profile"); // Redirigimos al perfil tras borrar
+        router.push("/contracts");
         router.refresh(); // Limpiamos caché de Next.js
       } else {
         toast.error("Fail to delete contract");
@@ -60,7 +64,7 @@ const ContractAction = ({ contractId, contractOwner }: Props) => {
         onClick={handleDelete}
         className="flex items-center gap-2 bg-white border border-rose-200 text-rose-600 px-6 py-2 rounded-xl font-bold hover:bg-rose-50 transition-all text-sm"
       >
-        <FaTrash size={14} /> Delete
+        Delete
       </button>
     </div>
   );

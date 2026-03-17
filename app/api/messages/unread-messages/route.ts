@@ -2,6 +2,7 @@ import connectDB from "@/config/database";
 import Message from "@/models/Message";
 import { getSessionUser } from "@/utils/getSessionUser";
 import { NextRequest, NextResponse } from "next/server";
+import User from "@/models/User";
 
 export const dynamic = "force-dynamic";
 
@@ -22,11 +23,13 @@ export const GET = async (request: NextRequest) => {
       );
     }
 
-    const { userId } = sessionUser;
-    // Hasta áca
+    // BUSCA EL ID REAL DE MONGO
+    const user = await User.findOne({ email: sessionUser.user.email });
+    const mongoId = user?._id;
+    console.log(mongoId);
 
     const count = await Message.countDocuments({
-      recipient: userId,
+      recipient: mongoId,
       read: false,
     });
 

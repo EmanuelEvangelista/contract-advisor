@@ -5,13 +5,21 @@ import Image from "next/image";
 import { ContractFormType } from "@/types/contract";
 import { useSession } from "next-auth/react";
 
-const ContractChat = ({ contract }: ContractFormType) => {
+interface Props {
+  contract: ContractFormType;
+}
+
+const ContractChat = ({ contract }: Props) => {
   const [messages, setMessages] = useState<any[]>([]);
   const [text, setText] = useState("");
 
   const { data: session } = useSession();
 
   const contractId = contract._id;
+
+  if (session?.user.studioId !== contract.studioId) {
+    return null;
+  }
 
   const { refreshNotifications } = useGlobalContext();
 
@@ -31,7 +39,7 @@ const ContractChat = ({ contract }: ContractFormType) => {
 
     const recipientId =
       session?.user?.id === contract.owner
-        ? contract.assignedEmployee._id
+        ? contract?.assignedEmployee?.employeeId
         : contract.owner;
 
     try {

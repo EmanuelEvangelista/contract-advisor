@@ -3,16 +3,10 @@ import {
   model,
   models,
   InferSchemaType,
-  Document,
-  Types,
+  CallbackWithoutResultAndOptionalError,
 } from "mongoose";
 
-/**
- * Contract Schema
- * Multi-tenant ready (studio-based isolation)
- */
-
-const contractSchema = new Schema(
+const contractSchema = new Schema<any>(
   {
     // ===== RELATIONS =====
 
@@ -148,8 +142,6 @@ const contractSchema = new Schema(
   },
 );
 
-// ===== INDEXES (Performance Ready) =====
-
 // Multi-tenant filtering
 contractSchema.index({ studioId: 1, status: 1 });
 
@@ -163,6 +155,16 @@ export type ContractType = InferSchemaType<typeof contractSchema> & {
   createdAt?: string;
   updatedAt?: string;
 };
+
+contractSchema.pre<any>("save", function (next) {
+  const doc = this;
+  if (doc.expiryDate) {
+    doc.expiryDate.setHours(0, 0, 0, 0);
+  }
+  if (doc.startDate) {
+    doc.startDate.setHours(0, 0, 0, 0);
+  }
+});
 
 const Contract = models.Contract || model("Contract", contractSchema);
 

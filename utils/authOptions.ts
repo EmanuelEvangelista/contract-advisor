@@ -5,16 +5,18 @@ import connectDB from "@/config/database";
 import User from "@/models/User";
 
 declare module "next-auth" {
+  interface User {
+    id: string;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+    role: string | null;
+    studioId: string | null;
+    status?: string | null;
+  }
+
   interface Session {
-    user: {
-      id: string;
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-      role?: string | null;
-      studioId?: string | null;
-      status?: string | null;
-    };
+    user: User;
   }
 }
 
@@ -22,8 +24,8 @@ declare module "next-auth/jwt" {
   interface JWT {
     id?: string;
     email?: string | null;
-    role?: string | null;
-    studioId?: string | null;
+    role: string | null;
+    studioId: string | null;
     status?: string | null;
   }
 }
@@ -72,9 +74,9 @@ export const authOptions: NextAuthOptions = {
           id: user._id.toString(),
           email: user.email,
           name: user.username,
-          role: user.role,
-          studioId: user.studioId,
-          status: user.status,
+          role: user.role || "user",
+          studioId: user.studioId?.toString() || null,
+          status: user.status ?? null,
         };
       },
     }),
@@ -82,7 +84,6 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async signIn({ account, profile }) {
-      // Usuarios reales (Google)
       if (account?.provider === "google") {
         await connectDB();
         const googleProfile = profile as GoogleProfile;
@@ -97,15 +98,15 @@ export const authOptions: NextAuthOptions = {
             email: googleProfile.email,
             username: googleProfile.name?.slice(0, 20),
             image: googleProfile.picture,
+            // Aquí podrías asignar un role/studioId por defecto si fuera necesario
           });
         }
       }
-
-      // Usuarios demo (credentials) → siempre true
       return true;
     },
 
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
+      // 1. Al iniciar sesión por primera vez (user existirá)
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -113,17 +114,31 @@ export const authOptions: NextAuthOptions = {
         token.studioId = user.studioId;
         token.status = user.status;
       }
+
+      // 2. PROBLEMA GOOGLE: Si es Google, 'user' no tiene el ID de Mongo la primera vez
+      // Forzamos una búsqueda en DB si el token no tiene los datos que necesitamos
+      if (!token.studioId || token.id?.length !== 24) {
+        await connectDB();
+        const dbUser = await User.findOne({ email: token.email });
+        if (dbUser) {
+          token.id = dbUser._id.toString();
+          token.role = dbUser.role || "user";
+          token.studioId = dbUser.studioId?.toString() || null;
+          token.status = dbUser.status || "active";
+        }
+      }
+
       return token;
     },
 
     async session({ session, token }) {
-      session.user = {
-        id: token.id!,
-        email: token.email!,
-        role: token.role,
-        studioId: token.studioId,
-        status: token.status,
-      };
+      if (session.user) {
+        session.user.id = token.id!;
+        session.user.email = token.email!;
+        session.user.role = token.role;
+        session.user.studioId = token.studioId;
+        session.user.status = token.status;
+      }
       return session;
     },
   },

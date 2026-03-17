@@ -13,20 +13,19 @@ export async function GET() {
     const in15Days = new Date();
     in15Days.setDate(today.getDate() + 15);
 
-    // 1. Fetch contracts expiring within the next 15 days
-    // that haven't received a reminder yet
+    // 1. Buscamos contratos que vencen pronto y no han sido notificados
     const contracts = await Contract.find({
       expiryDate: {
         $gte: today,
         $lte: in15Days,
       },
-      expirationReminderSent: { $ne: true },
+      expiryNotificationSent: { $ne: true },
     }).populate("owner");
 
-    const sentEmails = [];
+    // SOLUCIÓN AL ERROR DE TS: Definimos el tipo explícitamente como array de strings
+    const sentEmails: string[] = [];
 
     for (const contract of contracts) {
-      // Use fallback values to avoid "undefined" in the email
       const title = contract.contractName || "Untitled Contract";
       const contractor = contract.contractor_details?.name || "Not specified";
       const contractee = contract.contractee_details?.name || "Not specified";
@@ -54,9 +53,12 @@ export async function GET() {
           `,
         });
 
-        // Mark as sent so we don't spam the user tomorrow
-        contract.expiryNotificationSent = true;
-        await contract.save();
+        // 2. Marcamos como enviado saltando validaciones de campos requeridos faltantes
+        await Contract.findByIdAndUpdate(contract._id, {
+          $set: { expiryNotificationSent: true },
+        });
+
+        // Guardamos el email en nuestra lista para el reporte final
         sentEmails.push(ownerEmail);
       }
     }

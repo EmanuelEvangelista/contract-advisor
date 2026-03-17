@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { FaUserEdit, FaCheck } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface Member {
   _id: string;
@@ -14,7 +15,7 @@ interface Member {
 interface Props {
   contractId: string;
   currentOwnerId: string;
-  studioId: string;
+  studioId: string | null;
   onUpdate: () => void;
 }
 
@@ -29,6 +30,15 @@ const AssigneeSelector = ({
   const [selectedOwner, setSelectedOwner] = useState(currentOwnerId);
   const [savedOwner, setSavedOwner] = useState(currentOwnerId);
   const [loading, setLoading] = useState(false);
+
+  const { data: session } = useSession();
+
+  if (
+    session?.user.studioId !== studioId ||
+    session?.user?.role !== "accountant"
+  ) {
+    return null;
+  }
 
   useEffect(() => {
     const getMembers = async () => {

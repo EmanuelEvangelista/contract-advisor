@@ -13,7 +13,7 @@ const ActionPanel = () => {
   useEffect(() => {
     if (session?.user) {
       // 👈 La lógica condicional va ADENTRO del Hook
-      fetch("/api/cron/check-expiry");
+      fetch("/api/contracts/check-expiring");
     }
   }, [session?.user]);
 

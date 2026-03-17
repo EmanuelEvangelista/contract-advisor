@@ -218,20 +218,27 @@ const ProfilePage = () => {
                     >
                       <FaEye size={14} /> <span className="lg:hidden">Ver</span>
                     </Link>
-                    <Link
-                      href={`/contracts/${contract._id}/edit`}
-                      className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all text-xs font-bold"
-                    >
-                      <FaEdit size={14} />{" "}
-                      <span className="lg:hidden">Editar</span>
-                    </Link>
-                    <button
-                      onClick={() => handleDeleteContract(contract._id)}
-                      className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all text-xs font-bold"
-                    >
-                      <FaTrash size={14} />{" "}
-                      <span className="lg:hidden">Borrar</span>
-                    </button>
+
+                    {/* Solo mostramos Editar y Borrar si es el Owner O es Contador */}
+                    {(profileRole === "accountant" ||
+                      profileRole === "Admin") && (
+                      <>
+                        <Link
+                          href={`/contracts/${contract._id}/edit`}
+                          className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all text-xs font-bold"
+                        >
+                          <FaEdit size={14} />{" "}
+                          <span className="lg:hidden">Editar</span>
+                        </Link>
+                        <button
+                          onClick={() => handleDeleteContract(contract._id)}
+                          className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all text-xs font-bold"
+                        >
+                          <FaTrash size={14} />{" "}
+                          <span className="lg:hidden">Borrar</span>
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}

@@ -17,7 +17,7 @@ const Navbar = () => {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState<boolean>(false);
-  const [providers, setProviders] = useState<Record<string, any>>();
+  const [providers, setProviders] = useState<Record<string, any> | null>(null);
 
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
@@ -167,7 +167,7 @@ const Navbar = () => {
               <div className="flex items-center">
                 {providers?.google && (
                   <button
-                    onClick={() => signIn("google")}
+                    onClick={() => signIn("google", { callbackUrl: "/panel" })}
                     className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md transition-all"
                   >
                     <FaGoogle />

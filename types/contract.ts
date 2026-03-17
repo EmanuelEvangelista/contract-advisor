@@ -29,14 +29,14 @@ export interface ContractType {
   _id: string;
   name: string;
   createdAt: string;
-  studioId: string;
+  studioId: string | null;
 }
 
 export type AssignedEmployeeForm = {
   employeeId: string;
   name: string;
   email: string;
-  role: string;
+  role: string | null;
 };
 
 export type PaymentDetailsForm = {
@@ -68,7 +68,7 @@ export type AgroDetailsForm = {
 export type ContractFormType = {
   _id?: string;
 
-  studioId: any;
+  studioId: string | null;
   owner: any;
 
   contractName: string;
