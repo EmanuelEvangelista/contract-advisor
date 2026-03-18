@@ -31,15 +31,15 @@ const EmployeeStatusCard = ({ employee }: { employee: any }) => {
         // 2. Si la DB se actualizó, cambiamos la UI
         setIsActive(!isActive);
         toast.success(
-          `Empleado ${newStatus === "active" ? "activado" : "puesto en modo auditoría"}`,
+          `Empleado ${newStatus === "active" ? "activated" : "put into audit mode"}`,
         );
       } else {
         const errorData = await res.json();
-        toast.error(errorData.message || "Error al actualizar estado");
+        toast.error(errorData.message || "Error updating status");
       }
     } catch (error) {
       console.error("Error toggleStatus:", error);
-      toast.error("Fallo de conexión");
+      toast.error("Connection failed");
     } finally {
       setLoading(false);
     }

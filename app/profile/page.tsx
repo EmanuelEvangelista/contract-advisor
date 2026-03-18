@@ -122,7 +122,7 @@ const ProfilePage = () => {
           </div>
           <div className="hidden md:block text-right">
             <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">
-              Panel de Gestión
+              Management Panel
             </p>
             <p className="text-xs text-slate-600 font-semibold">
               Contract Advisor v1.0
@@ -174,7 +174,7 @@ const ProfilePage = () => {
                   <div className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-1">
                       <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-tighter">
-                        Nombre del Contrato
+                        Contract Name
                       </p>
                       <p className="text-base font-black text-slate-800 truncate">
                         {contract.contractName}
@@ -183,7 +183,7 @@ const ProfilePage = () => {
 
                     <div className="space-y-1">
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                        Tipo y Categoría
+                        Type and Category
                       </p>
                       <div className="flex items-center gap-2">
                         <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded uppercase">
@@ -194,7 +194,7 @@ const ProfilePage = () => {
 
                     <div className="space-y-1">
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                        Estado Operativo
+                        Operational Status
                       </p>
                       <div>
                         <span
@@ -235,7 +235,7 @@ const ProfilePage = () => {
                           className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all text-xs font-bold"
                         >
                           <FaTrash size={14} />{" "}
-                          <span className="lg:hidden">Borrar</span>
+                          <span className="lg:hidden">Delete</span>
                         </button>
                       </>
                     )}

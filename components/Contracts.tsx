@@ -69,16 +69,16 @@ const Contracts = () => {
     ) : (
       <div className="text-center py-20 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
         <h3 className="text-xl font-semibold text-slate-800">
-          No hay contratos aún
+          There are no contracts yet
         </h3>
         <p className="text-slate-500 mb-6">
-          Empezá cargando el primero para tu estudio.
+          Start by loading the first one for your study.
         </p>
         <Link
           href="/contracts/add"
           className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold"
         >
-          + Crear Primer Contrato
+          + Create First Contract
         </Link>
       </div>
     );

@@ -70,29 +70,52 @@ const ContractChat = ({ contract }: Props) => {
   return (
     <div className="border rounded-xl p-4">
       <div className="h-64 overflow-y-auto mb-4">
-        {messages.map((msg) => (
-          <div key={msg._id} className="flex gap-3 mb-2">
-            <Image
-              className="h-9 w-9 rounded-full object-cover"
-              // Si existe imagen y NO es la de iran.liara, la usamos. Si no, usamos la local.
-              src={
-                msg.sender?.image && !msg.sender.image.includes("iran.liara")
-                  ? msg.sender.image
-                  : ProfileImage
-              }
-              alt="User Profile"
-              width={36}
-              height={36}
-            />
+        {messages.map((msg) => {
+          // 1. Verificamos si el mensaje es nuestro
+          const isMe = msg.sender?._id === session?.user?.id;
 
-            <div>
-              <p className="text-sm font-bold">
-                {msg.sender?.username || "Unknown user"}
-              </p>
-              <p className="text-sm text-slate-600">{msg.text}</p>
+          return (
+            <div
+              key={msg._id}
+              className={`flex gap-3 mb-4 ${isMe ? "flex-row-reverse" : "flex-row"}`}
+            >
+              {/* Imagen de Perfil */}
+              <div className="flex-shrink-0">
+                <Image
+                  className="h-9 w-9 rounded-full object-cover border border-slate-100"
+                  src={
+                    msg.sender?.image &&
+                    !msg.sender.image.includes("iran.liara")
+                      ? msg.sender.image
+                      : ProfileImage
+                  }
+                  alt="User Profile"
+                  width={36}
+                  height={36}
+                />
+              </div>
+
+              {/* Burbuja del mensaje */}
+              <div
+                className={`flex flex-col max-w-[70%] ${isMe ? "items-end" : "items-start"}`}
+              >
+                <p className="text-[10px] text-slate-400 mb-1 px-1">
+                  {isMe ? "Tú" : msg.sender?.username || "Unknown user"}
+                </p>
+
+                <div
+                  className={`px-4 py-2 rounded-2xl text-sm shadow-sm ${
+                    isMe
+                      ? "bg-indigo-600 text-white rounded-tr-none"
+                      : "bg-slate-100 text-slate-700 rounded-tl-none"
+                  }`}
+                >
+                  <p>{msg.text}</p>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="flex gap-2">
@@ -100,14 +123,14 @@ const ContractChat = ({ contract }: Props) => {
           className="border rounded-lg px-3 py-2 flex-1"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Escribir mensaje..."
+          placeholder="Write a message.."
         />
 
         <button
           onClick={sendMessage}
           className="bg-emerald-500 text-white px-4 py-2 rounded-lg"
         >
-          Enviar
+          Send
         </button>
       </div>
     </div>

@@ -29,7 +29,7 @@ const ContractAction = ({ contractId, contractOwner }: Props) => {
 
   const handleDelete = async () => {
     const confirmed = window.confirm(
-      "¿Estás seguro de eliminar este contrato?",
+      "Are you sure you want to delete this contract?",
     );
     if (!confirmed) return;
 
@@ -47,7 +47,7 @@ const ContractAction = ({ contractId, contractOwner }: Props) => {
       }
     } catch (error) {
       console.error(error);
-      toast.error("Hubo un error en la comunicación con el servidor");
+      toast.error("There was an error in the communication with the server");
     }
   };
 

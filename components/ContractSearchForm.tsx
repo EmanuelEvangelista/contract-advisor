@@ -73,12 +73,12 @@ const ContractSearchForm = () => {
           value={contractType}
           onChange={(e) => setContractType(e.target.value)}
         >
-          <option value="All">Todos los tipos</option>
+          <option value="All">All types</option>
           <option value="Parcelary">Leasing</option>
-          <option value="Leasing">Compraventa</option>
-          <option value="Harvesting">Locación</option>
-          <option value="Service">Trabajo</option>
-          <option value="Storage">Trabajo</option>
+          <option value="Leasing">Parcelary</option>
+          <option value="Harvesting">"Harvesting"</option>
+          <option value="Service">Service</option>
+          <option value="Storage">Storage</option>
         </select>
       </div>
 
@@ -87,7 +87,7 @@ const ContractSearchForm = () => {
         type="submit"
         className="w-full md:w-auto px-8 py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-all shadow-md active:scale-95"
       >
-        Buscar
+        Search
       </button>
     </form>
   );

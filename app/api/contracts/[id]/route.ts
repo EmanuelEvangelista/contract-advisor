@@ -4,7 +4,6 @@ import Contract from "@/models/Contract";
 import cloudinary from "@/config/cloudinary";
 import mongoose from "mongoose";
 import { getSessionUser } from "@/utils/getSessionUser";
-import User from "@/models/User";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -47,7 +46,7 @@ export const GET = async (request: NextRequest, { params }: Props) => {
       contract.studioId.toString() !== sessionUser.user.studioId?.toString()
     ) {
       return NextResponse.json(
-        { error: "No perteneces a este estudio" },
+        { error: "You do not belong to this study" },
         { status: 401 },
       );
     }
@@ -189,7 +188,7 @@ export const PUT = async (
 
     if (!isPowerUser && !isOwner) {
       return NextResponse.json(
-        { message: "No tienes permiso para editar este contrato" },
+        { message: "You do not have permission to edit this contract." },
         { status: 403 },
       );
     }

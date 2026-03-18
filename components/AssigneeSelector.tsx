@@ -75,13 +75,13 @@ const AssigneeSelector = ({
 
       if (res.ok) {
         setSavedOwner(selectedOwner); // Actualizamos el estado de "guardado"
-        toast.success("Responsable actualizado correctamente");
+        toast.success("Responsible party updated correctly");
         onUpdate();
       } else {
-        toast.error("Error al reasignar el contrato");
+        toast.error("Error reassigning contract");
       }
     } catch (error) {
-      toast.error("Fallo de conexión");
+      toast.error("Connection failed");
     } finally {
       setLoading(false);
     }
@@ -89,16 +89,11 @@ const AssigneeSelector = ({
 
   // Verificamos si hay cambios pendientes para mostrar el botón
   const hasChanges = selectedOwner !== savedOwner;
-  console.log("AssigneeSelector renderizado", {
-    contractId,
-    currentOwnerId,
-    studioId,
-  });
 
   return (
     <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mt-6">
       <label className="flex items-center gap-2 text-xs font-black text-slate-500 uppercase tracking-widest mb-3">
-        <FaUserEdit className="text-indigo-600" /> Reasignar Responsable
+        <FaUserEdit className="text-indigo-600" /> Reassign Responsible
       </label>
 
       <div className="flex flex-col gap-3">
@@ -130,7 +125,7 @@ const AssigneeSelector = ({
               "Guardando..."
             ) : (
               <>
-                <FaCheck /> Confirmar Cambio
+                <FaCheck /> Confirm Change
               </>
             )}
           </button>
@@ -139,7 +134,7 @@ const AssigneeSelector = ({
 
       {!hasChanges && (
         <p className="text-[10px] text-slate-400 mt-2 italic text-center">
-          Seleccioná un miembro del equipo para reasignar.
+          Select a team member to reassign.
         </p>
       )}
     </div>

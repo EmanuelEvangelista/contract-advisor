@@ -74,7 +74,7 @@ const ContractCard = ({ contract }: { contract: any }) => {
         {/* Detalles del Agro / Ubicación */}
         <div className="flex flex-col gap-1 flex-1 lg:border-l lg:pl-6 border-slate-100">
           <span className="text-[11px] uppercase tracking-wider font-semibold text-slate-400">
-            Ubicación / Área
+            Location/Area
           </span>
           <div className="flex items-center gap-2 text-sm text-slate-700 font-medium">
             <FaMapMarkerAlt size={12} className="text-slate-400" />
@@ -87,7 +87,7 @@ const ContractCard = ({ contract }: { contract: any }) => {
         {/* Fechas */}
         <div className="flex flex-col gap-1 flex-1 lg:border-l lg:pl-6 border-slate-100">
           <span className="text-[11px] uppercase tracking-wider font-semibold text-slate-400">
-            Vencimiento
+            Expiry
           </span>
           <div className="flex items-center gap-2 text-sm text-slate-700">
             <FaCalendarAlt size={12} className="text-slate-400" />

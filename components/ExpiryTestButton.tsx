@@ -3,9 +3,12 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Spinner from "@/components/Spinner";
+import { useSession } from "next-auth/react";
 
-const CronTestButton = () => {
+const ExpiryTestButton = () => {
   const [loading, setLoading] = useState(false);
+
+  const { data: session } = useSession();
 
   const handleCronTest = async () => {
     setLoading(true);
@@ -27,6 +30,8 @@ const CronTestButton = () => {
       setLoading(false);
     }
   };
+
+  if (session?.user?.role !== "accountant") return null;
 
   return (
     <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-xl shadow-sm">
@@ -56,4 +61,4 @@ const CronTestButton = () => {
   );
 };
 
-export default CronTestButton;
+export default ExpiryTestButton;

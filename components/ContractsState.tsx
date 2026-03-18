@@ -58,10 +58,10 @@ const ContractsState = async () => {
     <section className="max-w-7xl mx-auto px-4">
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-          Dashboard de Contratos
+          Contracts Dashboard
         </h1>
         <p className="text-slate-500 mt-1">
-          Estado actual de tus gestiones parcelarias y arrendamientos.
+          Current status of your land parcel management and leases.
         </p>
       </div>
 

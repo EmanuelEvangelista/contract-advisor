@@ -40,7 +40,7 @@ export default function ButtonsDemo() {
         </button>
       </div>
       <p className="text-xs text-slate-400 italic">
-        * Acceso instantáneo sin registro. Prueba las funciones ahora.
+        * Instant access without registration. Try the features now.
       </p>
     </>
   );

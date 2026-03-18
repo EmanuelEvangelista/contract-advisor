@@ -13,7 +13,7 @@ export async function GET() {
     const in15Days = new Date();
     in15Days.setDate(today.getDate() + 15);
 
-    // 1. Buscamos contratos que vencen pronto y no han sido notificados
+    // 1. Buscamos contratos que vencen pronto y NO han sido notificados
     const contracts = await Contract.find({
       expiryDate: {
         $gte: today,
@@ -22,16 +22,14 @@ export async function GET() {
       expiryNotificationSent: { $ne: true },
     }).populate("owner");
 
-    // SOLUCIÓN AL ERROR DE TS: Definimos el tipo explícitamente como array de strings
     const sentEmails: string[] = [];
 
     for (const contract of contracts) {
       const title = contract.contractName || "Untitled Contract";
-      const contractor = contract.contractor_details?.name || "Not specified";
-      const contractee = contract.contractee_details?.name || "Not specified";
       const ownerEmail = contract.owner?.email;
 
       if (ownerEmail) {
+        // 2. Enviamos el email solo al dueño (Contador/Creador)
         await resend.emails.send({
           from: "ContractAdvisor <onboarding@resend.dev>",
           to: ownerEmail,
@@ -42,8 +40,8 @@ export async function GET() {
               <p>This is an automated reminder that the following contract is reaching its end date:</p>
               <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px;">
                 <p><strong>Contract:</strong> ${title}</p>
-                <p><strong>Contractor:</strong> ${contractor}</p>
-                <p><strong>Contractee:</strong> ${contractee}</p>
+                <p><strong>Contractor:</strong> ${contract.contractor_details?.name || "N/A"}</p>
+                <p><strong>Contractee:</strong> ${contract.contractee_details?.name || "N/A"}</p>
                 <p><strong>Expiry Date:</strong> ${new Date(contract.expiryDate).toLocaleDateString()}</p>
               </div>
               <p>Please take the necessary steps for renewal or termination.</p>
@@ -53,12 +51,11 @@ export async function GET() {
           `,
         });
 
-        // 2. Marcamos como enviado saltando validaciones de campos requeridos faltantes
+        // 3. Marcamos como enviado en la base de datos
         await Contract.findByIdAndUpdate(contract._id, {
           $set: { expiryNotificationSent: true },
         });
 
-        // Guardamos el email en nuestra lista para el reporte final
         sentEmails.push(ownerEmail);
       }
     }
