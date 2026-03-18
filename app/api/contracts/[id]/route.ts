@@ -46,9 +46,6 @@ export const GET = async (request: NextRequest, { params }: Props) => {
     if (
       contract.studioId.toString() !== sessionUser.user.studioId?.toString()
     ) {
-      console.error(
-        `Acceso denegado: Studio Contrato(${contract.studioId}) vs Usuario(${sessionUser.user.studioId})`,
-      );
       return NextResponse.json(
         { error: "No perteneces a este estudio" },
         { status: 401 },

@@ -4,6 +4,7 @@ import { useGlobalContext } from "@/context/GlobalContext";
 import Image from "next/image";
 import { ContractFormType } from "@/types/contract";
 import { useSession } from "next-auth/react";
+import ProfileImage from "@/assets/images/profile.png";
 
 interface Props {
   contract: ContractFormType;
@@ -72,15 +73,22 @@ const ContractChat = ({ contract }: Props) => {
         {messages.map((msg) => (
           <div key={msg._id} className="flex gap-3 mb-2">
             <Image
-              className="h-9 w-9 rounded-full"
-              src={msg.sender?.image || "/images/profile.png"}
+              className="h-9 w-9 rounded-full object-cover"
+              // Si existe imagen y NO es la de iran.liara, la usamos. Si no, usamos la local.
+              src={
+                msg.sender?.image && !msg.sender.image.includes("iran.liara")
+                  ? msg.sender.image
+                  : ProfileImage
+              }
               alt="User Profile"
               width={36}
               height={36}
             />
 
             <div>
-              <p className="text-sm font-bold">{msg.sender.username}</p>
+              <p className="text-sm font-bold">
+                {msg.sender?.username || "Unknown user"}
+              </p>
               <p className="text-sm text-slate-600">{msg.text}</p>
             </div>
           </div>

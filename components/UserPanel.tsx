@@ -8,9 +8,10 @@ const UserPanel = async () => {
   const session = await getServerSession(authOptions);
 
   // 2. Si no hay sesión, no mostramos nada (o un mensaje)
-  if (!session) return null;
+  if (!session || !session?.user?.studioId) return null;
 
-  const data: any = await fetchContracts();
+  const data: any = await fetchContracts(session.user.studioId);
+
   const contractsArray = Array.isArray(data?.contracts) ? data.contracts : [];
 
   const recentContracts = [...contractsArray]

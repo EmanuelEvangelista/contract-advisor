@@ -126,28 +126,49 @@ const ContractAddForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const formData = new FormData();
-    formData.append("data", JSON.stringify(fields));
 
-    if (fields.pdfs) {
-      fields.pdfs.forEach((file) => {
-        formData.append("file", file);
-      });
-    }
+    const formData = new FormData();
+
+    // 🔥 NUEVO: separar archivos y urls
+    const newFiles: File[] = [];
+    const existingUrls: string[] = [];
+
+    fields.pdfs.forEach((item) => {
+      if (item instanceof File) {
+        newFiles.push(item);
+      } else {
+        existingUrls.push(item);
+      }
+    });
+
+    // 🔥 mandar JSON sin archivos
+    formData.append(
+      "data",
+      JSON.stringify({
+        ...fields,
+        pdfs: existingUrls,
+      }),
+    );
+
+    // 🔥 mandar archivos correctamente
+    newFiles.forEach((file) => {
+      formData.append("files", file);
+    });
 
     try {
       const res = await fetch("/api/contracts", {
         method: "POST",
         body: formData,
       });
+
       const result = await res.json();
+
       if (res.ok) {
         alert("Contract Saved Successfully!");
-        setFields(initialState); // Resetear estado
-        formRef.current?.reset(); // Resetear input visualmente
+        setFields(initialState);
+        formRef.current?.reset();
       } else {
-        const err = await res.json();
-        alert("Error: " + err.error);
+        alert("Error: " + result.error);
       }
     } catch (error) {
       console.error("Error saving contract", error);
@@ -155,7 +176,6 @@ const ContractAddForm = () => {
       setLoading(false);
     }
   };
-
   // --- Estilos Reutilizables ---
   const sectionTitle =
     "flex items-center gap-2 text-xl font-bold text-slate-800 mb-5 border-b pb-2";

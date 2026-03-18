@@ -2,9 +2,7 @@ import { ContractType } from "@/models/Contract";
 import { ContractFormType } from "@/types/contract";
 
 //Fetch all properties from the API
-async function fetchContracts({ showFeatured = false } = {}): Promise<
-  ContractType[]
-> {
+async function fetchContracts(studioId?: string): Promise<ContractType[]> {
   const apiDomain = process.env.NEXT_PUBLIC_API_DOMAIN || null;
 
   try {
@@ -13,10 +11,11 @@ async function fetchContracts({ showFeatured = false } = {}): Promise<
       return [];
     }
 
-    const res = await fetch(
-      `${apiDomain}/contracts${showFeatured ? "/featured" : ""}`,
-      { cache: "no-store" },
-    );
+    const url = studioId
+      ? `${apiDomain}/contracts?studioId=${studioId}`
+      : `${apiDomain}/contracts`;
+
+    const res = await fetch(url, { cache: "no-store" });
 
     if (!res.ok) {
       throw new Error("Failed to fetch data");

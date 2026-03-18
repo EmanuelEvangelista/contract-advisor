@@ -18,9 +18,12 @@ const ContractPdfs = ({ pdfs }: ContractPDFsProps) => {
 
   if (!pdfs || pdfs.length === 0) return null;
 
-  // Truco de Cloudinary: Cambiar extensión .pdf por .jpg para obtener miniatura
   const getThumbnail = (url: string) => {
-    return url.replace(/\.pdf$/, ".jpg");
+    if (!url.includes("cloudinary")) return url;
+
+    return url
+      .replace("/upload/", "/upload/pg_1/") // 👈 primera página
+      .replace(".pdf", ".jpg"); // 👈 convertir a imagen
   };
 
   const copyToClipboard = (url: string, index: number) => {

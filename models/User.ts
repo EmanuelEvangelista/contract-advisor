@@ -35,7 +35,7 @@ const userSchema = new Schema(
       default: null,
     },
     studioId: {
-      type: String,
+      type: String || null,
       ref: "Studio",
       default: null,
     },

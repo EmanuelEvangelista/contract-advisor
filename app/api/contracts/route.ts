@@ -3,20 +3,34 @@ import { NextRequest, NextResponse } from "next/server";
 import Contract from "@/models/Contract";
 import { getSessionUser } from "@/utils/getSessionUser";
 import cloudinary from "@/config/cloudinary";
+import { Types } from "mongoose";
 
 //GET /api/contracts
 export const GET = async (request: NextRequest) => {
   try {
     await connectDB();
 
+    const sessionUser = await getSessionUser();
+
+    const studioIdFromUrl = request.nextUrl.searchParams.get("studioId");
+    const studioIdUser = sessionUser?.user.studioId || studioIdFromUrl;
+
     const page = Number(request.nextUrl.searchParams.get("page")) || 1;
     const pageSize = Number(request.nextUrl.searchParams.get("pageSize")) || 6;
 
     const skip = (page - 1) * pageSize;
 
-    const total = await Contract.countDocuments({});
+    // Si no hay studioId, devolvemos vacío o manejamos el error
+    if (!studioIdUser) {
+      return NextResponse.json({ contracts: [], total: 0 }, { status: 200 });
+    }
+
+    // Usamos el ID de la sesión
+    const query = { studioId: new Types.ObjectId(studioIdUser) };
+
+    const total = await Contract.countDocuments(query);
     const contracts = await (Contract as any)
-      .find({})
+      .find(query)
       .skip(skip)
       .limit(pageSize);
 
@@ -25,7 +39,7 @@ export const GET = async (request: NextRequest) => {
       contracts,
     };
 
-    return NextResponse.json(result);
+    return NextResponse.json(result, { status: 200 });
   } catch (error) {
     console.error("Database connection error:", error);
     return NextResponse.json(
@@ -54,7 +68,7 @@ export const POST = async (request: NextRequest) => {
     const { role, studioId, email, name } = user;
 
     const formData = await request.formData();
-    const pdfFiles = formData.getAll("file") as File[];
+    const pdfFiles = formData.getAll("files") as File[];
     const rawData = formData.get("data") as string;
 
     if (!rawData) {

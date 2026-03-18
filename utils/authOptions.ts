@@ -7,8 +7,8 @@ import User from "@/models/User";
 declare module "next-auth" {
   interface User {
     id: string;
-    name?: string | null;
-    email?: string | null;
+    name?: string;
+    email?: string;
     image?: string | null;
     role: string | null;
     studioId: string | null;
@@ -83,30 +83,30 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async signIn({ account, profile }) {
+    async signIn({ user, account }) {
       if (account?.provider === "google") {
         await connectDB();
-        const googleProfile = profile as GoogleProfile;
-        const userExists = await User.findOne({ email: googleProfile.email });
 
-        if (userExists?.status === "inactive") {
-          throw new Error("Your account has been deactivated.");
-        }
+        if (!user.email) return false; // 🔥 importante
 
-        if (!userExists) {
-          await User.create({
-            email: googleProfile.email,
-            username: googleProfile.name?.slice(0, 20),
-            image: googleProfile.picture,
-            // Aquí podrías asignar un role/studioId por defecto si fuera necesario
+        let dbUser = await User.findOne({ email: user.email });
+
+        // ✅ Crear usuario si no existe
+        if (!dbUser) {
+          dbUser = await User.create({
+            email: user.email,
+            username: user.name,
+            role: null,
+            studioId: null,
+            status: "active",
           });
         }
       }
+
       return true;
     },
 
-    async jwt({ token, user, account }) {
-      // 1. Al iniciar sesión por primera vez (user existirá)
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
@@ -115,14 +115,17 @@ export const authOptions: NextAuthOptions = {
         token.status = user.status;
       }
 
-      // 2. PROBLEMA GOOGLE: Si es Google, 'user' no tiene el ID de Mongo la primera vez
-      // Forzamos una búsqueda en DB si el token no tiene los datos que necesitamos
-      if (!token.studioId || token.id?.length !== 24) {
+      // 🔥 FIX IMPORTANTE
+      if (!token.email) return token;
+
+      if (token.email) {
         await connectDB();
+
         const dbUser = await User.findOne({ email: token.email });
+
         if (dbUser) {
           token.id = dbUser._id.toString();
-          token.role = dbUser.role || "user";
+          token.role = dbUser.role || null;
           token.studioId = dbUser.studioId?.toString() || null;
           token.status = dbUser.status || "active";
         }
@@ -144,8 +147,8 @@ export const authOptions: NextAuthOptions = {
   },
 
   pages: {
-    signIn: "/login",
-    error: "/login",
+    signIn: "/onboarding",
+    error: "/",
   },
 
   session: {

@@ -5,13 +5,13 @@ import Link from "next/link";
 import logo from "@/assets/images/logo.png";
 import profileDefault from "@/assets/images/profile.png";
 import { FaGoogle, FaBars, FaBell } from "react-icons/fa";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 import InviteCode from "./InviteCode";
 import UnreadMessageCount from "@/components/UnreadMessageCount";
 
 const Navbar = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const profileImage = session?.user?.image || profileDefault;
   const role = session?.user.role;
 
@@ -22,6 +22,8 @@ const Navbar = () => {
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
+  const router = useRouter();
+
   const pathname: string = usePathname();
 
   useEffect(() => {
@@ -31,6 +33,17 @@ const Navbar = () => {
     };
     setAuthProviders();
   }, []);
+
+  useEffect(() => {
+    // Si el usuario está autenticado pero no tiene rol, y no está ya en onboarding
+    if (
+      status === "authenticated" &&
+      !session?.user?.role &&
+      pathname !== "/onboarding"
+    ) {
+      router.push("/onboarding");
+    }
+  }, [session, status, pathname, router]);
 
   // 3. Efecto para cerrar al hacer clic fuera
   useEffect(() => {
@@ -230,6 +243,59 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden" ref={mobileMenuRef}>
+          <div className="space-y-1 px-2 pb-3 pt-2 bg-white border-b border-slate-100 shadow-xl">
+            {session ? (
+              <>
+                <Link
+                  href="/panel"
+                  className={`${pathname === "/panel" ? "bg-indigo-50 text-indigo-900" : "text-slate-600"} block rounded-md px-3 py-2 text-base font-medium`}
+                >
+                  Panel
+                </Link>
+                <Link
+                  href="/profile"
+                  className={`${pathname === "/profile" ? "bg-indigo-50 text-indigo-900" : "text-slate-600"} block rounded-md px-3 py-2 text-base font-medium`}
+                >
+                  My Profile
+                </Link>
+                <Link
+                  href="/contracts"
+                  className={`${pathname === "/contracts" ? "bg-indigo-50 text-indigo-900" : "text-slate-600"} block rounded-md px-3 py-2 text-base font-medium`}
+                >
+                  Contracts
+                </Link>
+                <Link
+                  href="/contracts/add"
+                  className="block rounded-md px-3 py-2 text-base font-bold text-indigo-600"
+                >
+                  + Add Contract
+                </Link>
+                {role === "accountant" && (
+                  <div className="px-3 py-2 border-t border-slate-50">
+                    <InviteCode />
+                  </div>
+                )}
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="block w-full text-left rounded-md px-3 py-2 text-base font-medium text-pink-600 hover:bg-pink-50"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/"
+                className={`${pathname === "/" ? "bg-indigo-50 text-indigo-900" : "text-slate-600"} block rounded-md px-3 py-2 text-base font-medium`}
+              >
+                Home
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

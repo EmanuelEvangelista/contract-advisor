@@ -14,10 +14,11 @@ const ContractsState = async () => {
 
   // 2. Traemos solo los contratos que le pertenecen (usando la lógica de la API que creamos)
   // Si es contador, pasamos studioId; si no, userId.
-  const identifier = sessionUser.user.studioId;
+  const studioId = sessionUser?.user.studioId?.toString();
+  console.log("es studio", studioId);
 
   // 1. Obtenemos los datos
-  const rawData: any = await fetchContracts(identifier);
+  const rawData: any = await fetchContracts(studioId);
 
   const data = Array.isArray(rawData) ? rawData : rawData?.contracts || [];
 

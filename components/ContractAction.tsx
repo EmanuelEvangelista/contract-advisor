@@ -25,7 +25,7 @@ const ContractAction = ({ contractId, contractOwner }: Props) => {
     session?.user?.role === "accountant" ||
     session?.user?.role === "employee";
 
-  if (role === "employee" && userId != contractOwner) return null;
+  if (role === "employee" || userId != contractOwner) return null;
 
   const handleDelete = async () => {
     const confirmed = window.confirm(
