@@ -118,7 +118,7 @@ const ContractPage = () => {
             href="/contracts"
             className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600"
           >
-            <FaArrowLeft /> Volver
+            <FaArrowLeft /> Back
           </Link>
 
           <div className="flex gap-3">
@@ -146,7 +146,7 @@ const ContractPage = () => {
               </h1>
 
               <p className="text-sm text-slate-500">
-                Tipo de contrato: {contract.contractType}
+                Type of contract: {contract.contractType}
               </p>
 
               {/* EMPLEADO RESPONSABLE */}
@@ -154,7 +154,7 @@ const ContractPage = () => {
               {contract.assignedEmployee?.name && (
                 <div className="flex items-center gap-2 mt-2 text-sm font-semibold text-indigo-600">
                   <FaUser />
-                  Responsable: {contract.assignedEmployee.name}
+                  Responsible: {contract.assignedEmployee.name}
                 </div>
               )}
             </div>
@@ -164,7 +164,7 @@ const ContractPage = () => {
             <span
               className={`px-3 py-1 rounded-full text-xs font-bold ${expiryColor}`}
             >
-              Vence en {diffDays} días
+              Expires in {diffDays} days
             </span>
 
             <span className="flex items-center gap-2 text-sm font-bold text-slate-600">
@@ -315,16 +315,16 @@ const ContractPage = () => {
           <div className="flex justify-between items-center px-6 py-3 border-b bg-slate-50">
             <h3 className="flex items-center gap-2 text-xs font-black text-slate-500 uppercase">
               <FaFilePdf className="text-red-500" />
-              Documento
+              Document
             </h3>
 
-            {contract.pdfs?.[0] && (
+            {typeof contract.pdfs?.[0] === "string" && (
               <a
                 href={contract.pdfs[0]}
                 target="_blank"
                 className="text-xs font-bold text-indigo-600 flex items-center gap-1"
               >
-                Abrir PDF <FaExternalLinkAlt size={10} />
+                View PDF
               </a>
             )}
           </div>
@@ -338,7 +338,7 @@ const ContractPage = () => {
               />
             ) : (
               <div className="flex items-center justify-center h-full text-slate-400">
-                No hay PDF cargado
+                No PDF loaded
               </div>
             )}
           </div>
