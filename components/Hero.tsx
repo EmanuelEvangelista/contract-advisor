@@ -7,6 +7,7 @@ const Hero = () => {
       {/* Hero Content */}
       <main className="max-w-7xl mx-auto px-8 pt-16 pb-24 grid lg:grid-cols-2 gap-12 items-center">
         <div className="space-y-8">
+          <ButtonsDemo />
           <div className="inline-block px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-sm font-bold tracking-wide uppercase">
             Smart Management for the Agro World
           </div>
@@ -18,8 +19,6 @@ const Hero = () => {
             Automate, track, and optimize your agricultural agreements with
             ease. The all-in-one platform for modern producers and contractors.
           </p>
-
-          <ButtonsDemo />
 
           {/* Mini Features */}
           <div className="grid grid-cols-3 gap-6 pt-8 border-t border-slate-200">

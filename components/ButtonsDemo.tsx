@@ -23,9 +23,9 @@ export default function ButtonsDemo() {
             handleLogin("demo-reclutador@contractadvisor.com", "accountant")
           }
           disabled={!!loading}
-          className="group w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-blue-500/20 flex items-center justify-center gap-3 active:scale-95 disabled:opacity-70"
+          className="group w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-sm transition-all shadow-xl shadow-blue-500/20 flex items-center justify-center gap-3 active:scale-95 disabled:opacity-70"
         >
-          {loading === "accountant" ? "Entrando..." : "Demo Contador"}
+          {loading === "accountant" ? "Get in..." : "Demo Accountant/Admin"}
           <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
         </button>
 
@@ -34,9 +34,9 @@ export default function ButtonsDemo() {
             handleLogin("employee-demo@contractadvisor.com", "employee")
           }
           disabled={!!loading}
-          className="w-full sm:w-auto bg-slate-900 hover:bg-black text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-slate-900/10 flex items-center justify-center gap-3 active:scale-95 disabled:opacity-70"
+          className="w-full sm:w-auto bg-slate-900 hover:bg-black text-white px-8 py-4 rounded-2xl font-bold text-sm transition-all shadow-xl shadow-slate-900/10 flex items-center justify-center gap-3 active:scale-95 disabled:opacity-70"
         >
-          {loading === "employee" ? "Entrando..." : "Demo Empleado"}
+          {loading === "employee" ? "Entrando..." : "Demo Employee"}
         </button>
       </div>
       <p className="text-xs text-slate-400 italic">
