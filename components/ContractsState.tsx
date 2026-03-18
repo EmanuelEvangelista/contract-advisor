@@ -68,21 +68,21 @@ const ContractsState = async () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <Link href={"/contracts"} target="_blank" rel="noopener noreferrer">
           <StatCard
-            label="Próximos Vencimientos"
+            label="Upcoming Expirations"
             count={expiringSoon}
             color="bg-amber-500" // Naranja/Ambar
           />
         </Link>
         <Link href={"/contracts"} target="_blank" rel="noopener noreferrer">
           <StatCard
-            label="Contratos Vencidos"
+            label="“Expired Contracts”"
             count={expired}
             color="bg-rose-500" // Rojo/Rose
           />
         </Link>
         <Link href={"/contracts"} target="_blank" rel="noopener noreferrer">
           <StatCard
-            label="Contratos Activos"
+            label="Active Contracts"
             count={active}
             color="bg-emerald-500" // Verde/Esmeralda
           />
