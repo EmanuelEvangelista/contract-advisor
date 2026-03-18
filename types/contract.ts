@@ -88,7 +88,7 @@ export type ContractFormType = {
 
   assignedEmployee?: AssignedEmployeeForm;
 
-  pdfs?: string[];
+  pdfs?: (string | File)[];
 
   notes?: string;
 

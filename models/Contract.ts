@@ -125,7 +125,7 @@ const contractSchema = new Schema<any>(
 
     pdfs: {
       type: [{ type: String }],
-      default: null,
+      default: [],
     },
 
     notes: {

@@ -116,12 +116,12 @@ const ContractEditForm = () => {
   useEffect(() => {
     // Calculamos el total
     const totalAmount =
-      Number(fields.agroDetails.area) *
-      (fields.paymentDetails.quintalsPerHa || 0);
+      Number(fields?.agroDetails?.area) *
+      (fields?.paymentDetails?.quintalsPerHa || 0);
 
     // Solo actualizamos si el valor cambió para evitar loops infinitos
-    if (totalAmount !== fields.paymentDetails.amount) {
-      setFields((prev) => ({
+    if (totalAmount !== fields?.paymentDetails?.amount) {
+      setFields((prev: any) => ({
         ...prev,
         paymentDetails: {
           ...prev.paymentDetails,
@@ -129,7 +129,7 @@ const ContractEditForm = () => {
         },
       }));
     }
-  }, [fields.agroDetails.area, fields.paymentDetails.quintalsPerHa]);
+  }, [fields?.agroDetails?.area, fields?.paymentDetails?.quintalsPerHa]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -173,7 +173,7 @@ const ContractEditForm = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files);
-      setFields((prev) => ({
+      setFields((prev: any) => ({
         ...prev,
         pdfs: [...(prev.pdfs || []), ...newFiles],
       }));
@@ -399,7 +399,7 @@ const ContractEditForm = () => {
               <input
                 type="text"
                 name="agroDetails.location"
-                value={fields.agroDetails.location}
+                value={fields?.agroDetails?.location}
                 onChange={handleChange}
                 placeholder="City, State, Plot number"
                 className={inputStyle}
@@ -411,7 +411,7 @@ const ContractEditForm = () => {
               <input
                 type="number"
                 name="agroDetails.area"
-                value={fields.agroDetails.area ?? ""}
+                value={fields?.agroDetails?.area ?? ""}
                 onChange={handleChange}
                 placeholder="e.g. 150"
                 className={inputStyle}
@@ -422,7 +422,7 @@ const ContractEditForm = () => {
               <label className={labelStyle}>Main Crop</label>
               <select
                 name="agroDetails.cropType"
-                value={fields.agroDetails.cropType}
+                value={fields?.agroDetails?.cropType}
                 onChange={handleChange}
                 className={inputStyle}
               >
@@ -435,7 +435,7 @@ const ContractEditForm = () => {
               <input
                 type="checkbox"
                 name="agroDetails.insuranceIncluded"
-                checked={fields.agroDetails.insuranceIncluded}
+                checked={fields?.agroDetails?.insuranceIncluded}
                 onChange={handleChange}
                 className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
                 id="insurance"
@@ -483,7 +483,7 @@ const ContractEditForm = () => {
                   <label className={labelStyle}>Commodity</label>
                   <select
                     name="paymentDetails.commodity"
-                    value={fields.paymentDetails.commodity}
+                    value={fields?.paymentDetails?.commodity}
                     onChange={handleChange}
                     className={inputStyle}
                     required
@@ -503,7 +503,7 @@ const ContractEditForm = () => {
                     <input
                       type="number"
                       name="paymentDetails.quantity"
-                      value={fields.paymentDetails.quantity ?? 0}
+                      value={fields?.paymentDetails?.quantity ?? 0}
                       onChange={handleChange}
                       placeholder="Qty"
                       className={inputStyle}
@@ -514,7 +514,7 @@ const ContractEditForm = () => {
                     <label className={labelStyle}>Unit</label>
                     <select
                       name="paymentDetails.unit"
-                      value={fields.paymentDetails.unit}
+                      value={fields?.paymentDetails?.unit}
                       onChange={handleChange}
                       className={inputStyle}
                     >
@@ -532,7 +532,7 @@ const ContractEditForm = () => {
                   <input
                     type="number"
                     name="paymentDetails.quintalsPerHa"
-                    value={fields.paymentDetails.quintalsPerHa ?? 0}
+                    value={fields?.paymentDetails?.quintalsPerHa ?? 0}
                     onChange={handleChange}
                     className={inputStyle}
                     placeholder="0"
@@ -549,7 +549,7 @@ const ContractEditForm = () => {
                     <input
                       type="number"
                       name="paymentDetails.amount"
-                      value={fields.paymentDetails.amount ?? 0}
+                      value={fields?.paymentDetails?.amount ?? 0}
                       readOnly
                       className="bg-transparent text-xl font-black text-indigo-700 outline-none w-full"
                     />
@@ -559,7 +559,7 @@ const ContractEditForm = () => {
                   <label className={labelStyle}>Currency</label>
                   <select
                     name="paymentDetails.currency"
-                    value={fields.paymentDetails.currency}
+                    value={fields?.paymentDetails?.currency}
                     onChange={handleChange}
                     className={inputStyle}
                   >
@@ -575,7 +575,7 @@ const ContractEditForm = () => {
               <label className={labelStyle}>Frequency</label>
               <select
                 name="paymentDetails.frequency"
-                value={fields.paymentDetails.frequency}
+                value={fields?.paymentDetails?.frequency}
                 onChange={handleChange}
                 className={inputStyle}
               >
@@ -615,7 +615,9 @@ const ContractEditForm = () => {
                   <span className="text-indigo-600 font-bold">
                     {/* Si hay 1 solo, muestra el nombre. Si hay varios, muestra la cantidad */}
                     {fields.pdfs.length === 1
-                      ? fields.pdfs[0].name
+                      ? typeof fields.pdfs[0] === "string"
+                        ? fields.pdfs[0]
+                        : fields.pdfs[0].name
                       : `${fields.pdfs.length} files selected`}
                   </span>
                 ) : (
@@ -638,7 +640,7 @@ const ContractEditForm = () => {
                     className="flex items-center justify-between bg-slate-50 border border-slate-200 px-3 py-2 rounded-lg"
                   >
                     <span className="text-xs text-slate-500 truncate max-w-[250px] italic">
-                      {file.name}
+                      {typeof file === "string" ? file : file.name}
                     </span>
                     <button
                       type="button"
