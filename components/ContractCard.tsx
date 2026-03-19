@@ -5,7 +5,8 @@ import {
   FaCalendarAlt,
   FaUser,
   FaMapMarkerAlt,
-  FaEnvelope, // Importamos el ícono de mensaje
+  FaEnvelope,
+  FaUserShield,
 } from "react-icons/fa";
 import { useState, useEffect } from "react";
 
@@ -93,6 +94,11 @@ const ContractCard = ({ contract }: { contract: any }) => {
             <FaCalendarAlt size={12} className="text-slate-400" />
             {formatDate(contract.expiryDate)}
           </div>
+        </div>
+
+        <div className="flex items-center gap-2 text-sm text-slate-500">
+          <FaUserShield size={12} />
+          <span>{contract.assignedEmployee?.name || "Unassigned"}</span>
         </div>
 
         {/* Estado y Acciones */}

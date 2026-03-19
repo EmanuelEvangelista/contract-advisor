@@ -24,20 +24,6 @@ const ActionPanel = () => {
 
   return (
     <section className="flex flex-col gap-6">
-      {/* Bloque 1: Botón de Acción Principal */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
-        <h3 className="text-[10px] font-black text-slate-400 mb-4 tracking-[0.15em] uppercase">
-          Quick Actions
-        </h3>
-        <Link
-          href={"/contracts/add"}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-indigo-100 transition-all active:scale-95"
-        >
-          <FaPlus size={14} />
-          Add contract
-        </Link>
-      </div>
-
       {/* Bloque 2: Gestión de Personal (Solo visible para contador según tu lógica) */}
       {role && (
         <div className="bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-800">
@@ -57,8 +43,20 @@ const ActionPanel = () => {
         </div>
       )}
 
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
-        <ExpiryTestButton />
+      <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-xl shadow-sm">
+        <h3 className="text-sm font-semibold text-indigo-900 mb-2">
+          📧 Automated Expiry Alerts
+        </h3>
+        <p className="text-xs text-indigo-700 mb-3">
+          Contracts expiring within 15 days automatically trigger email
+          notifications to the contract owner via Resend.
+        </p>
+        <div className="flex items-center gap-2 bg-white border border-indigo-100 rounded-lg px-3 py-2">
+          <span className="text-xs text-emerald-600 font-bold">✅ Active</span>
+          <span className="text-xs text-slate-400">
+            — running on contract check cycle
+          </span>
+        </div>
       </div>
 
       {/* Bloque 3: Plantillas Recientes */}

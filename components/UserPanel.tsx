@@ -17,7 +17,7 @@ const UserPanel = async () => {
   const recentContracts = [...contractsArray]
     .sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        new Date(a.expiryDate).getTime() - new Date(b.expiryDate).getTime(),
     )
     .slice(0, 3);
 

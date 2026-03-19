@@ -7,7 +7,6 @@ import AuthProvider from "@/components/AuthProvider";
 import { ToastContainer } from "react-toastify";
 import { GlobalProvider } from "@/context/GlobalContext";
 import "react-toastify/dist/ReactToastify.css";
-import "@/assets/styles/globals.css";
 
 export const metadata: Metadata = {
   title: "Contract Advisor | Professional Contract Management",
@@ -29,7 +28,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-dashboard.png",
+        url: "https://contractadvisor.vercel.app/images/logo.png",
         width: 1200,
         height: 630,
         alt: "Contract Advisor Dashboard Preview",
