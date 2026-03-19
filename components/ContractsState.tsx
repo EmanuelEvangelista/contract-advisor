@@ -75,7 +75,7 @@ const ContractsState = async () => {
         </Link>
         <Link href={"/contracts"} target="_blank" rel="noopener noreferrer">
           <StatCard
-            label="“Expired Contracts”"
+            label="Expired Contracts"
             count={expired}
             color="bg-rose-500" // Rojo/Rose
           />
