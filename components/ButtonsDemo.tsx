@@ -36,7 +36,7 @@ export default function ButtonsDemo() {
           disabled={!!loading}
           className="w-full sm:w-auto bg-slate-900 hover:bg-black text-white px-8 py-4 rounded-2xl font-bold text-sm transition-all shadow-xl shadow-slate-900/10 flex items-center justify-center gap-3 active:scale-95 disabled:opacity-70"
         >
-          {loading === "employee" ? "Entrando..." : "Demo Employee"}
+          {loading === "employee" ? "Logging in..." : "Demo Employee"}
         </button>
       </div>
       <p className="text-xs text-slate-400 italic">
