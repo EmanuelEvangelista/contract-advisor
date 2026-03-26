@@ -113,9 +113,7 @@ const Navbar = () => {
                       ? "text-indigo-900 border-b-2 border-indigo-900"
                       : "text-slate-400 hover:text-indigo-900"
                   } pb-1 text-sm lg:text-base font-medium transition-all`}
-                >
-                  Home
-                </Link>
+                ></Link>
               )}
 
               {session && (

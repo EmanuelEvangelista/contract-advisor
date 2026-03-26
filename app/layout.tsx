@@ -3,10 +3,10 @@ import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import "@/assets/styles/globals.css";
 import { Metadata } from "next";
-import AuthProvider from "@/components/AuthProvider";
+
 import { ToastContainer } from "react-toastify";
-import { GlobalProvider } from "@/context/GlobalContext";
 import "react-toastify/dist/ReactToastify.css";
+import Providers from "@/components/Providers";
 
 export const metadata: Metadata = {
   title: "Contract Advisor | Professional Contract Management",
@@ -43,18 +43,16 @@ interface MainLayoutProps {
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <GlobalProvider>
-      <AuthProvider>
-        <html lang="en">
-          <body>
-            <NavBar />
-            <main className="pt-20">{children}</main>
-            <Footer />
-            <ToastContainer />
-          </body>
-        </html>
-      </AuthProvider>
-    </GlobalProvider>
+    <html lang="en">
+      <body>
+        <Providers>
+          <NavBar />
+          <main className="pt-20">{children}</main>
+          <Footer />
+          <ToastContainer />
+        </Providers>
+      </body>
+    </html>
   );
 };
 

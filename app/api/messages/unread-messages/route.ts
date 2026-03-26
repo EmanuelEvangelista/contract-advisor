@@ -26,7 +26,6 @@ export const GET = async (request: NextRequest) => {
     // BUSCA EL ID REAL DE MONGO
     const user = await User.findOne({ email: sessionUser.user.email });
     const mongoId = user?._id;
-    console.log(mongoId);
 
     const count = await Message.countDocuments({
       recipient: mongoId,

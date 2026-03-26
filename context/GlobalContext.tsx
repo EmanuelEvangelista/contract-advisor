@@ -1,5 +1,4 @@
 "use client";
-
 import {
   createContext,
   useContext,
@@ -8,6 +7,7 @@ import {
   Dispatch,
   SetStateAction,
 } from "react";
+import { useSession } from "next-auth/react";
 
 interface GlobalContextType {
   unreadMessages: number;
@@ -19,6 +19,7 @@ const GlobalContext = createContext<GlobalContextType | null>(null);
 
 export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const { data: session, status } = useSession();
 
   const fetchUnread = async () => {
     try {
@@ -33,6 +34,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
+    if (status !== "authenticated") return;
     fetchUnread();
 
     const interval = setInterval(() => {

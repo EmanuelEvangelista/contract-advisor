@@ -24,21 +24,19 @@ const UserPanel = async () => {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
       <div className="p-6 border-b border-slate-100">
-        <h2 className="text-lg font-bold text-slate-800">
-          Contratos Recientes
-        </h2>
+        <h2 className="text-lg font-bold text-slate-800">Recent Contracts</h2>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50/50 text-slate-500 uppercase text-[11px] tracking-wider font-semibold">
-              <th className="px-6 py-4">Cliente / Contrato</th>
-              <th className="px-6 py-4">Tipo</th>
-              <th className="px-6 py-4">Emisión</th>
-              <th className="px-6 py-4">Vencimiento</th>
-              <th className="px-6 py-4 text-center">Estado</th>
-              <th className="px-6 py-4 text-right">Acciones</th>
+              <th className="px-6 py-4">Client / Contract</th>
+              <th className="px-6 py-4">Type</th>
+              <th className="px-6 py-4">Date of issue</th>
+              <th className="px-6 py-4">Expiration</th>
+              <th className="px-6 py-4 text-center">State</th>
+              <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
 
@@ -51,7 +49,7 @@ const UserPanel = async () => {
                   colSpan={6}
                   className="px-6 py-10 text-center text-slate-500 italic"
                 >
-                  No hay contratos disponibles en este momento.
+                  There are no contracts available at this time.
                 </td>
               </tr>
             ) : (
