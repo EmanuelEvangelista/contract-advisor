@@ -38,7 +38,7 @@ const ContractInfo = ({ contract }: { contract: any }) => {
         <span
           className={`inline-flex px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-tighter ${getStatusStyles(contract.status)}`}
         >
-          {contract.status === "Active" ? "Activo" : "Vencido"}
+          {contract.status === "Active" ? "Active" : "Expired"}
         </span>
       </td>
       <td className="px-6 py-4 text-right">

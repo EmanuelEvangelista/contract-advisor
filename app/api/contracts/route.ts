@@ -24,6 +24,17 @@ export const GET = async (request: NextRequest) => {
     if (!studioIdUser) {
       return NextResponse.json({ contracts: [], total: 0 }, { status: 200 });
     }
+    console.log(sessionUser);
+
+    // 1. Actualización "al vuelo": Corregimos los que expiraron hoy
+    await Contract.updateMany(
+      {
+        studioId: new Types.ObjectId(studioIdUser),
+        status: "Active",
+        expiryDate: { $lt: new Date() },
+      },
+      { $set: { status: "Expired" } },
+    );
 
     // Usamos el ID de la sesión
     const query = { studioId: new Types.ObjectId(studioIdUser) };
