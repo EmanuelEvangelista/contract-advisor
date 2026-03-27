@@ -42,7 +42,7 @@ const ContractSearchForm = () => {
         </div>
         <input
           type="text"
-          placeholder="Cliente, CUIT o Contrato..."
+          placeholder="Client, Tax ID or Contract..."
           className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 border-none text-slate-800 focus:ring-2 focus:ring-indigo-500 transition-all text-sm"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
@@ -56,7 +56,7 @@ const ContractSearchForm = () => {
         </div>
         <input
           type="text"
-          placeholder="Empleado encargado..."
+          placeholder="Employee in charge..."
           className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 border-none text-slate-800 focus:ring-2 focus:ring-indigo-500 transition-all text-sm"
           value={employee}
           onChange={(e) => setEmployee(e.target.value)}

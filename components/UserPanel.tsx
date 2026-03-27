@@ -14,7 +14,7 @@ const UserPanel = async () => {
 
   const contractsArray = Array.isArray(data?.contracts) ? data.contracts : [];
 
-  const recentContracts = [...contractsArray]
+  const closeToExpiring = [...contractsArray]
     .sort(
       (a, b) =>
         new Date(a.expiryDate).getTime() - new Date(b.expiryDate).getTime(),
@@ -24,7 +24,9 @@ const UserPanel = async () => {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
       <div className="p-6 border-b border-slate-100">
-        <h2 className="text-lg font-bold text-slate-800">Recent Contracts</h2>
+        <h2 className="text-lg font-bold text-slate-800">
+          Closest to expiring
+        </h2>
       </div>
 
       <div className="overflow-x-auto">
@@ -41,7 +43,7 @@ const UserPanel = async () => {
           </thead>
 
           <tbody className="divide-y divide-slate-100">
-            {recentContracts.length === 0 ? (
+            {closeToExpiring.length === 0 ? (
               // SOLUCIÓN AL ERROR DE HIDRATACIÓN:
               // Usamos una fila real que ocupe las 6 columnas
               <tr>
@@ -53,7 +55,7 @@ const UserPanel = async () => {
                 </td>
               </tr>
             ) : (
-              recentContracts.map((contract) => (
+              closeToExpiring.map((contract) => (
                 <ContractInfo key={contract._id} contract={contract} />
               ))
             )}
