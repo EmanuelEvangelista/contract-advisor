@@ -11,9 +11,14 @@ export const GET = async () => {
     const user = await User.findOne({ email: sessionUser.user.email });
     if (!user) return new Response("User not found", { status: 404 });
 
+    const recipient =
+      sessionUser.user.role === "accountant"
+        ? sessionUser.user.studioId
+        : sessionUser.userId;
+
     // 2. Usar user._id (que es un ObjectId válido)
     const unreadContractIds = await Message.distinct("contract", {
-      recipient: user._id,
+      recipient: recipient,
       read: false,
     });
 

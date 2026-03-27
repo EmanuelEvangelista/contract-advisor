@@ -18,6 +18,8 @@ const ContractChat = ({ contract }: Props) => {
 
   const contractId = contract._id;
 
+  console.log(contractId, contract.studioId);
+
   if (session?.user.studioId !== contract.studioId) {
     return null;
   }
@@ -38,41 +40,52 @@ const ContractChat = ({ contract }: Props) => {
   const sendMessage = async () => {
     if (!text || !contractId) return;
 
+    const myId = session?.user?.id;
+    const myRole = session?.user?.role;
+    const ownerId = contract.owner; // El "contador" o dueño del contrato
+    const employeeId = contract?.assignedEmployee?.employeeId;
+
+    // LÓGICA DE ESPEJO:
+    // Si mi ID es el del dueño, el mensaje va para el empleado.
+    // En cualquier otro caso (si soy el empleado o un admin), el mensaje va para el dueño.
+
     const recipientId =
-      session?.user?.id === contract.owner
-        ? contract?.assignedEmployee?.employeeId
-        : contract.owner;
+      myRole === "accountant"
+        ? contract?.assignedEmployee?.employeeId // accountant → employee
+        : session?.user?.studioId; // employee → studio
+
+    // Validación extra: Si por algún error el recipientId queda igual al senderId
+    if (recipientId === myId) {
+      console.error("Error: Intentando enviar un mensaje a uno mismo.");
+      return;
+    }
 
     try {
       await fetch(`/api/contracts/${contractId}/messages`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contractId: contractId,
+          contractId,
           text,
-          recipientId: recipientId, // 👈 Enviamos el ID correcto
+          recipientId,
         }),
       });
 
-      setText("");
-
       await fetchMessages();
-
-      // actualiza la campana de notificaciones
       refreshNotifications();
+      setText("");
     } catch (error) {
-      console.error(error);
+      console.error("Error al enviar mensaje:", error);
     }
   };
-
   return (
     <div className="border rounded-xl p-4">
       <div className="h-64 overflow-y-auto mb-4">
         {messages.map((msg) => {
           // 1. Verificamos si el mensaje es nuestro
-          const isMe = msg.sender?._id === session?.user?.id;
+          const isMe =
+            msg.sender?._id === session?.user?.id ||
+            msg.sender?._id === session?.user?.studioId;
 
           return (
             <div

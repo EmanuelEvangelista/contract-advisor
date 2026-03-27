@@ -9,9 +9,12 @@ import {
   FaUserShield,
 } from "react-icons/fa";
 import { useState, useEffect } from "react";
+import { useGlobalContext } from "@/context/GlobalContext";
 
 const ContractCard = ({ contract }: { contract: any }) => {
   const [hasMessages, setHasMessages] = useState(false);
+
+  const { unreadMessages } = useGlobalContext();
 
   // Lógica para detectar si este contrato tiene mensajes no leídos
   useEffect(() => {
@@ -26,8 +29,9 @@ const ContractCard = ({ contract }: { contract: any }) => {
         console.error("Error al checkear mensajes:", error);
       }
     };
+
     checkUnread();
-  }, [contract._id]);
+  }, [contract._id, unreadMessages]);
 
   // Formateo de fecha simple
   const formatDate = (dateStr: string) =>

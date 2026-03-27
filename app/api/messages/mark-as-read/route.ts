@@ -24,11 +24,16 @@ export const PUT = async (request: Request) => {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    const recipient =
+      sessionUser.user.role === "accountant"
+        ? sessionUser.user.studioId
+        : sessionUser.userId;
+
     // 3. Actualizar mensajes
     const result = await Message.updateMany(
       {
         contract: contractId,
-        recipient: user._id, // Ahora sí es un ObjectId válido
+        recipient: recipient,
         read: false,
       },
       { read: true },

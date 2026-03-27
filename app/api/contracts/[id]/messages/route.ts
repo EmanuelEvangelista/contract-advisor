@@ -2,6 +2,7 @@ import connectDB from "@/config/database";
 import Message from "@/models/Message";
 import { getSessionUser } from "@/utils/getSessionUser";
 import { NextResponse, NextRequest } from "next/server";
+import { Types } from "mongoose";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -20,19 +21,31 @@ export const GET = async (request: NextRequest, { params }: Props) => {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const messages = await Message.find({ contract: id })
-    .populate("sender", "username image")
-    .sort({ createdAt: 1 });
+  const isAccountant = sessionUser.user.role === "accountant";
 
-  // Marcamos como leídos los mensajes que recibiste tú en este contrato
+  // 👇 ESTE es el ID lógico del usuario en el chat
+  const myId = isAccountant
+    ? sessionUser.user.studioId?.toString()
+    : sessionUser.userId;
+
+  if (!myId) {
+    return NextResponse.json([], { status: 200 });
+  }
+
+  // ✅ Marcar como leídos SOLO los que yo recibo
   await Message.updateMany(
     {
       contract: id,
-      recipient: sessionUser.userId, // Usamos recipient para ser precisos
+      recipient: new Types.ObjectId(myId),
       read: false,
+      sender: { $ne: new Types.ObjectId(myId) },
     },
     { read: true },
   );
+
+  const messages = await Message.find({ contract: id })
+    .populate("sender", "username image")
+    .sort({ createdAt: 1 });
 
   return NextResponse.json(messages);
 };
@@ -40,7 +53,7 @@ export const GET = async (request: NextRequest, { params }: Props) => {
 export const POST = async (request: NextRequest, { params }: Props) => {
   try {
     await connectDB();
-    const { id } = await params; // Este es el ID del contrato que viene en la URL
+    const { id } = await params;
     const sessionUser = await getSessionUser();
 
     if (
@@ -51,21 +64,38 @@ export const POST = async (request: NextRequest, { params }: Props) => {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { text, recipientId } = await request.json();
+    const { text, recipientId: employeeId } = await request.json();
 
-    // Validación de seguridad
-    if (!text || !recipientId) {
+    if (!text) {
       return NextResponse.json(
         { error: "Faltan datos requeridos" },
         { status: 400 },
       );
     }
 
+    const isAccountant = sessionUser.user.role === "accountant";
+
+    // 👇 DEFINIMOS sender y recipient correctamente
+    const sender = isAccountant
+      ? sessionUser.user.studioId
+      : sessionUser.userId;
+
+    const recipient = isAccountant
+      ? employeeId // accountant responde al empleado
+      : sessionUser.user.studioId; // empleado manda al estudio
+
+    if (!sender || !recipient) {
+      return NextResponse.json(
+        { error: "Invalid sender or recipient" },
+        { status: 400 },
+      );
+    }
+
     const message = await Message.create({
-      sender: sessionUser.userId,
-      recipient: recipientId,
-      contract: id, // Usamos el ID de los params para evitar errores
-      text: text,
+      contract: new Types.ObjectId(id),
+      sender: new Types.ObjectId(sender),
+      recipient: new Types.ObjectId(recipient),
+      text,
       read: false,
     });
 

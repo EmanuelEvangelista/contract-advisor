@@ -27,7 +27,6 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
       const data = await res.json();
 
       setUnreadMessages(data.count);
-      console.log("aca deberia aparecer", data.count);
     } catch (error) {
       console.error("Error fetching unread messages:", error);
     }
@@ -42,7 +41,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     }, 30000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [status]);
 
   return (
     <GlobalContext.Provider

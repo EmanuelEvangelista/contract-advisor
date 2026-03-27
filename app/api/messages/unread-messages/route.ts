@@ -3,6 +3,7 @@ import Message from "@/models/Message";
 import { getSessionUser } from "@/utils/getSessionUser";
 import { NextRequest, NextResponse } from "next/server";
 import User from "@/models/User";
+import { Types } from "mongoose";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,6 @@ export const GET = async (request: NextRequest) => {
   try {
     await connectDB();
 
-    // En cada lugar que quiera obtener los datos del usuario que inicio session tengo que usar estas lineas
     const sessionUser = await getSessionUser();
 
     if (!sessionUser || !sessionUser.userId) {
@@ -23,12 +23,22 @@ export const GET = async (request: NextRequest) => {
       );
     }
 
-    // BUSCA EL ID REAL DE MONGO
-    const user = await User.findOne({ email: sessionUser.user.email });
-    const mongoId = user?._id;
+    // 🔥 NUEVA LÓGICA (según rol)
+    const isAccountant = sessionUser.user.role === "accountant";
+
+    const myId = isAccountant ? sessionUser.user.studioId : sessionUser.userId;
+
+    if (!myId) {
+      return NextResponse.json({ count: 0 }, { status: 200 });
+    }
+
+    const recipient =
+      sessionUser.user.role === "accountant"
+        ? sessionUser.user.studioId
+        : sessionUser.userId;
 
     const count = await Message.countDocuments({
-      recipient: mongoId,
+      recipient: recipient,
       read: false,
     });
 
