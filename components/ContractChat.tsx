@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useGlobalContext } from "@/context/GlobalContext";
 import Image from "next/image";
 import { ContractFormType } from "@/types/contract";
 import { useSession } from "next-auth/react";
-import ProfileImage from "@/assets/images/profile.png";
+import ProfileImage from "@/assets/images/logo.png";
 
 interface Props {
   contract: ContractFormType;
@@ -13,12 +13,21 @@ interface Props {
 const ContractChat = ({ contract }: Props) => {
   const [messages, setMessages] = useState<any[]>([]);
   const [text, setText] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const { data: session } = useSession();
 
   const contractId = contract._id;
 
-  console.log(contractId, contract.studioId);
+  // 3. Efecto para scrollear al fondo cuando cambian los mensajes
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages]);
 
   if (session?.user.studioId !== contract.studioId) {
     return null;
@@ -30,6 +39,7 @@ const ContractChat = ({ contract }: Props) => {
     const res = await fetch(`/api/contracts/${contractId}/messages`);
     const data = await res.json();
     setMessages(data);
+    refreshNotifications();
   };
 
   useEffect(() => {
@@ -42,12 +52,6 @@ const ContractChat = ({ contract }: Props) => {
 
     const myId = session?.user?.id;
     const myRole = session?.user?.role;
-    const ownerId = contract.owner; // El "contador" o dueño del contrato
-    const employeeId = contract?.assignedEmployee?.employeeId;
-
-    // LÓGICA DE ESPEJO:
-    // Si mi ID es el del dueño, el mensaje va para el empleado.
-    // En cualquier otro caso (si soy el empleado o un admin), el mensaje va para el dueño.
 
     const recipientId =
       myRole === "accountant"
@@ -78,14 +82,20 @@ const ContractChat = ({ contract }: Props) => {
       console.error("Error al enviar mensaje:", error);
     }
   };
+
   return (
     <div className="border rounded-xl p-4">
-      <div className="h-64 overflow-y-auto mb-4">
+      <div
+        ref={scrollRef} // <--- ESTO ES CLAVE
+        className="h-64 overflow-y-auto mb-4"
+      >
         {messages.map((msg) => {
           // 1. Verificamos si el mensaje es nuestro
-          const isMe =
-            msg.sender?._id === session?.user?.id ||
-            msg.sender?._id === session?.user?.studioId;
+          const myId = String(session?.user?.id || "");
+          const msgSenderId = String(msg.sender?._id || msg.sender || "");
+
+          // Si coinciden los IDs, es MI mensaje y va a la derecha
+          const isMe = msgSenderId === myId;
 
           return (
             <div
@@ -113,7 +123,7 @@ const ContractChat = ({ contract }: Props) => {
                 className={`flex flex-col max-w-[70%] ${isMe ? "items-end" : "items-start"}`}
               >
                 <p className="text-[10px] text-slate-400 mb-1 px-1">
-                  {isMe ? "Tú" : msg.sender?.username || "Unknown user"}
+                  {isMe ? "Tú" : msg.sender?.username || "Studio Admin"}
                 </p>
 
                 <div

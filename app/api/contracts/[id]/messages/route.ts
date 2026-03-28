@@ -23,12 +23,12 @@ export const GET = async (request: NextRequest, { params }: Props) => {
 
   const isAccountant = sessionUser.user.role === "accountant";
 
-  // 👇 ESTE es el ID lógico del usuario en el chat
-  const myId = isAccountant
-    ? sessionUser.user.studioId?.toString()
-    : sessionUser.userId;
+  // MI IDENTIDAD EN ESTE CHAT:
+  const myChatId = isAccountant
+    ? sessionUser.user.studioId // Si soy contador, mi "ID de buzón" es el Studio
+    : sessionUser.userId; // Si soy empleado, es mi ID de usuario
 
-  if (!myId) {
+  if (!myChatId) {
     return NextResponse.json([], { status: 200 });
   }
 
@@ -36,15 +36,15 @@ export const GET = async (request: NextRequest, { params }: Props) => {
   await Message.updateMany(
     {
       contract: id,
-      recipient: new Types.ObjectId(myId),
+      recipient: myChatId,
       read: false,
-      sender: { $ne: new Types.ObjectId(myId) },
+      sender: { $ne: myChatId }, // IMPORTANTE: Que el que lo envió NO sea yo mismo
     },
     { read: true },
   );
 
   const messages = await Message.find({ contract: id })
-    .populate("sender", "username image")
+    .populate("sender", "username image studioId")
     .sort({ createdAt: 1 });
 
   return NextResponse.json(messages);
@@ -76,9 +76,7 @@ export const POST = async (request: NextRequest, { params }: Props) => {
     const isAccountant = sessionUser.user.role === "accountant";
 
     // 👇 DEFINIMOS sender y recipient correctamente
-    const sender = isAccountant
-      ? sessionUser.user.studioId
-      : sessionUser.userId;
+    const sender = sessionUser.userId;
 
     const recipient = isAccountant
       ? employeeId // accountant responde al empleado
