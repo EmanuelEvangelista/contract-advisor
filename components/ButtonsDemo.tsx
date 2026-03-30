@@ -11,6 +11,7 @@ export default function ButtonsDemo() {
     await signIn("credentials", {
       email: email,
       password: "password123",
+      role: role,
       callbackUrl: "/panel",
     });
   };

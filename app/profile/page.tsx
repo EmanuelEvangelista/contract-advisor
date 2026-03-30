@@ -8,10 +8,13 @@ import Spinner from "@/components/Spinner";
 import { toast } from "react-toastify";
 import { FaFileContract, FaEdit, FaTrash, FaEye } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import ContractAction from "@/components/ContractAction";
 
 interface Contract {
   _id: string;
   contractName: string;
+  assignedEmployee: { employeeId: string };
+  employeeId: string;
   contractType: string;
   status: string;
   pdfs?: string[];
@@ -221,7 +224,8 @@ const ProfilePage = () => {
 
                     {/* Solo mostramos Editar y Borrar si es el Owner O es Contador */}
                     {(profileRole === "accountant" ||
-                      profileRole === "Admin") && (
+                      session?.user?.id ===
+                        contract?.assignedEmployee.employeeId) && (
                       <>
                         <Link
                           href={`/contracts/${contract._id}/edit`}

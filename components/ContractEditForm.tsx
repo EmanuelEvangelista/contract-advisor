@@ -13,10 +13,15 @@ import { ContractFormType } from "@/types/contract";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { fetchContract } from "@/utils/request";
+import { useSession } from "next-auth/react";
 
 const ContractEditForm = () => {
   const { id } = useParams();
   const router = useRouter();
+
+  const { data: session, status } = useSession();
+
+  console.log("sesion =", session);
 
   const [fields, setFields] = useState<ContractFormType>({
     studioId: "", // Se llenará en el backend o vía props
@@ -68,14 +73,8 @@ const ContractEditForm = () => {
   const [mounted, setMounted] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [employees, setEmployees] = useState([]); // Para el select de empleados
-
-  // Simulación de carga de empleados (Aquí harías tu fetch a /api/studio/employees)
   useEffect(() => {
-    // const fetchEmployees = async () => { ... }
-  }, []);
-
-  useEffect(() => {
+    if (status !== "authenticated") return;
     setMounted(true);
     const contractId = Array.isArray(id) ? id[0] : id;
 
@@ -85,10 +84,42 @@ const ContractEditForm = () => {
       try {
         const contractData = await fetchContract(contractId);
 
+        console.log(contractData);
+
         // 1. Verificamos que contractData no sea null
         if (!contractData) {
           toast.error("Contract not found");
           router.push("/contracts"); // Opcional: redirigir si no existe
+          return;
+        }
+
+        // --- LOGICA DE PERMISOS ESTRICTA ---
+        const myRole = session?.user?.role;
+        const myStudioId = String(session?.user?.studioId || "");
+
+        const contractStudioId = String(contractData.studioId || "");
+
+        const isAccountant =
+          myRole === "accountant" && myStudioId === contractStudioId;
+
+        const isAssignedEmployee =
+          session?.user?.id === contractData?.assignedEmployee?.employeeId;
+
+        console.log(
+          "datos finales",
+          session?.user?.id,
+          contractData?.assignedEmployee?.employeeId,
+        );
+
+        // DEBUG
+        console.log({
+          isAccountant,
+          isAssignedEmployee,
+        });
+
+        if (!isAccountant && !isAssignedEmployee) {
+          toast.error("Access Denied");
+          router.push("/contracts");
           return;
         }
 
@@ -111,7 +142,7 @@ const ContractEditForm = () => {
     };
 
     fetchContractData();
-  }, []);
+  }, [status]);
 
   useEffect(() => {
     // Calculamos el total

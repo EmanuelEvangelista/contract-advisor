@@ -141,9 +141,9 @@ const ContractChat = ({ contract }: Props) => {
         })}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 w-full">
         <input
-          className="border rounded-lg px-3 py-2 flex-1"
+          className="border border-slate-200 rounded-xl px-3 py-1.5 flex-1 text-sm outline-none focus:border-emerald-400 transition-colors"
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Write a message.."
@@ -151,7 +151,11 @@ const ContractChat = ({ contract }: Props) => {
 
         <button
           onClick={sendMessage}
-          className="bg-emerald-500 text-white px-4 py-2 rounded-lg"
+          /* px-3 y py-1.5: achican el botón 
+       text-xs y font-bold: mantienen la legibilidad
+       shrink-0: evita que el botón se desborde o se deforme
+    */
+          className="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-all active:scale-95 shrink-0"
         >
           Send
         </button>

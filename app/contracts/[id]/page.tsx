@@ -8,10 +8,10 @@ import {
   FaUser,
   FaSeedling,
   FaFilePdf,
-  FaExternalLinkAlt,
   FaMoneyBillWave,
   FaClock,
 } from "react-icons/fa";
+import { IoSend } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import { ContractFormType } from "@/types/contract";
 import { useParams } from "next/navigation";
@@ -131,7 +131,7 @@ const ContractPage = () => {
         </div>
       </div>
 
-      <main className="max-w-6xl mx-auto px-6 mt-8 space-y-8">
+      <div className="max-w-6xl mx-auto px-6 mt-8 space-y-8">
         {/* ===== VENCIMIENTO ===== */}
 
         <section className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -241,6 +241,10 @@ const ContractPage = () => {
               label="Frecuencia"
               value={contract.paymentDetails?.frequency}
             />
+          </InfoCard>
+
+          <InfoCard title="Chat" icon={<IoSend />}>
+            <ContractChat contract={contract} />
           </InfoCard>
 
           {/* AGRO */}
@@ -355,14 +359,14 @@ const ContractPage = () => {
             <p className="text-sm text-amber-900">{contract.notes}</p>
           </section>
         )}
-        <ContractChat contract={contract} />
+
         <AssigneeSelector
           contractId={contract._id!}
           currentOwnerId={contract.owner?._id || contract.owner}
           studioId={contract.studioId}
           onUpdate={onUpdate}
         />
-      </main>
+      </div>
     </div>
   );
 };

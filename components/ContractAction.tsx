@@ -12,7 +12,7 @@ interface Props {
   contract: ContractFormType;
 }
 
-const ContractAction = ({ contractId, contractOwner }: Props) => {
+const ContractAction = ({ contract, contractId, contractOwner }: Props) => {
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -20,12 +20,11 @@ const ContractAction = ({ contractId, contractOwner }: Props) => {
   const role = user?.role;
   const userId = user?.id;
 
-  const canManage =
-    session?.user?.id === contractOwner ||
-    session?.user?.role === "accountant" ||
-    session?.user?.role === "employee";
+  if (session?.user.studioId !== contract?.studioId) {
+    return null;
+  }
 
-  if (role === "employee" || userId != contractOwner) return null;
+  if (role === "employee" && userId != contractOwner) return null;
 
   const handleDelete = async () => {
     const confirmed = window.confirm(
