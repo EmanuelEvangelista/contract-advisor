@@ -20,6 +20,7 @@ import AssigneeSelector from "@/components/AssigneeSelector";
 import { useRouter } from "next/navigation";
 import ContractChat from "@/components/ContractChat";
 import ContractAction from "@/components/ContractAction";
+import { useSession } from "next-auth/react";
 
 const ContractPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,6 +28,7 @@ const ContractPage = () => {
 
   const [contract, setContract] = useState<ContractFormType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const fetchContractData = async () => {
@@ -242,10 +244,13 @@ const ContractPage = () => {
               value={contract.paymentDetails?.frequency}
             />
           </InfoCard>
-
-          <InfoCard title="Chat" icon={<IoSend />}>
-            <ContractChat contract={contract} />
-          </InfoCard>
+          {/* Solo mostramos el Chat si el usuario es el EMPLEADO ASIGNADO */}
+          {String(session?.user?.id) ===
+            String(contract.assignedEmployee?.employeeId) && (
+            <InfoCard title="Chat" icon={<IoSend />}>
+              <ContractChat contract={contract} />
+            </InfoCard>
+          )}
 
           {/* AGRO */}
 

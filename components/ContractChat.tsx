@@ -19,6 +19,13 @@ const ContractChat = ({ contract }: Props) => {
 
   const contractId = contract._id;
 
+  if (
+    session?.user?.id !== contract.owner &&
+    session?.user?.role !== "accountant"
+  ) {
+    return;
+  }
+
   // 3. Efecto para scrollear al fondo cuando cambian los mensajes
   useEffect(() => {
     if (scrollRef.current) {
@@ -59,7 +66,7 @@ const ContractChat = ({ contract }: Props) => {
         : session?.user?.studioId; // employee → studio
 
     // Validación extra: Si por algún error el recipientId queda igual al senderId
-    if (recipientId === myId) {
+    if (recipientId === myId && myRole !== "accountant") {
       console.error("Error: Intentando enviar un mensaje a uno mismo.");
       return;
     }
