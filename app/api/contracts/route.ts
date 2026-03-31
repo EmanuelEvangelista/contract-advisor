@@ -42,6 +42,7 @@ export const GET = async (request: NextRequest) => {
     const total = await Contract.countDocuments(query);
     const contracts = await (Contract as any)
       .find(query)
+      .sort({ expiryDate: 1 })
       .skip(skip)
       .limit(pageSize);
 
