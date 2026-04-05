@@ -3,6 +3,7 @@ import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import "@/assets/styles/globals.css";
 import { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -50,6 +51,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           <main className="pt-20">{children}</main>
           <Footer />
           <ToastContainer />
+          <Analytics />
         </Providers>
       </body>
     </html>
