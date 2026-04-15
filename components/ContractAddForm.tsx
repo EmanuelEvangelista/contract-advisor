@@ -200,7 +200,7 @@ const ContractAddForm = () => {
         <h2 className={sectionTitle}>
           <FaFileContract className="text-indigo-600" /> General Information
         </h2>
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-3">
           <div className="md:col-span-2">
             <label htmlFor="contractName" className={labelStyle}>
               Contract Name
@@ -230,7 +230,7 @@ const ContractAddForm = () => {
               <option value="Service">Agricultural Service</option>
             </select>
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className={labelStyle}>Start Date</label>
               <input

@@ -76,7 +76,7 @@ const EmployeeStatusCard = ({ employee }: { employee: any }) => {
                 isActive ? "text-emerald-500" : "text-slate-400"
               }`}
             >
-              • {isActive ? "Activo" : "Pasivo (Auditoría)"}
+              • {isActive ? "Active" : "Passive (Audit)"}
             </span>
           </div>
         </div>
