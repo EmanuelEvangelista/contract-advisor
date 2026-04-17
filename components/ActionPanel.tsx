@@ -35,7 +35,7 @@ const ActionPanel = () => {
             className="w-full bg-slate-800 hover:bg-slate-700 text-slate-100 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-95 border border-slate-700"
           >
             <FaUser className="text-indigo-400" size={16} />
-            Manage Personnel
+            Staff Management
           </Link>
           <p className="text-[10px] text-slate-500 mt-3 text-center italic">
             Exclusive access for accountants

@@ -34,9 +34,7 @@ const ManageEmployeesPage = () => {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <header className="mb-8">
-        <h1 className="text-3xl font-black text-slate-900">
-          Employee Management
-        </h1>
+        <h1 className="text-3xl font-black text-slate-900">Staff Management</h1>
         <p className="text-slate-500 text-sm italic">
           Only accountants can activate or deactivate profiles for auditing.
         </p>

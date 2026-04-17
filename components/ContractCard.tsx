@@ -49,7 +49,7 @@ const ContractCard = ({ contract }: { contract: any }) => {
       {hasMessages && (
         <div className="absolute -top-2.5 right-4 flex items-center gap-1 bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg animate-pulse z-10">
           <FaEnvelope size={8} />
-          <span>Nuevo Mensaje</span>
+          <span>New message</span>
         </div>
       )}
 

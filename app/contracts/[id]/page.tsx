@@ -71,10 +71,17 @@ const ContractPage = () => {
 
   if (loading) return <Spinner loading={loading} />;
 
+  if (!session)
+    return (
+      <div className="p-10 text-center font-bold text-slate-600">
+        You must log in first
+      </div>
+    );
+
   if (!contract)
     return (
       <div className="p-10 text-center font-bold text-slate-600">
-        Contrato no encontrado
+        Contract not found
       </div>
     );
 
@@ -244,14 +251,14 @@ const ContractPage = () => {
               value={contract.paymentDetails?.frequency}
             />
           </InfoCard>
-          {/* Solo mostramos el Chat si el usuario es el EMPLEADO ASIGNADO */}
-          {String(session?.user?.id) ===
-            String(contract.assignedEmployee?.employeeId) && (
+          {/* Solo mostramos el Chat si es el empleado asignado O es el accountant */}
+          {(String(session?.user?.id) ===
+            String(contract.assignedEmployee?.employeeId) ||
+            session?.user?.role === "accountant") && (
             <InfoCard title="Chat" icon={<IoSend />}>
               <ContractChat contract={contract} />
             </InfoCard>
           )}
-
           {/* AGRO */}
 
           <InfoCard title="Datos Agro / Servicio" icon={<FaSeedling />}>

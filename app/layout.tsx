@@ -4,9 +4,8 @@ import Footer from "@/components/Footer";
 import "@/assets/styles/globals.css";
 import { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
-
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import Providers from "@/components/Providers";
 
 export const metadata: Metadata = {
@@ -52,6 +51,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
           <Footer />
           <ToastContainer />
           <Analytics />
+          <SpeedInsights />
         </Providers>
       </body>
     </html>
