@@ -32,17 +32,6 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  useEffect(() => {
-    if (status !== "authenticated") return;
-    fetchUnread();
-
-    const interval = setInterval(() => {
-      fetchUnread();
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [status]);
-
   return (
     <GlobalContext.Provider
       value={{

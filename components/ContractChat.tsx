@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ContractFormType } from "@/types/contract";
 import { useSession } from "next-auth/react";
 import ProfileImage from "@/assets/images/logo.png";
+import { pusherClient } from "@/lib/pusherClient";
 
 interface Props {
   contract: ContractFormType;
@@ -25,6 +26,24 @@ const ContractChat = ({ contract }: Props) => {
   ) {
     return;
   }
+
+  useEffect(() => {
+    if (!contractId) return;
+
+    // Suscribirse al canal
+    const channel = pusherClient.subscribe(`chat-${contractId}`);
+
+    channel.bind("new-message", (data: any) => {
+      setMessages((prev) => [...prev, data]);
+      refreshNotifications();
+    });
+
+    // Cleanup
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [contractId]);
 
   // 3. Efecto para scrollear al fondo cuando cambian los mensajes
   useEffect(() => {

@@ -3,6 +3,7 @@ import Message from "@/models/Message";
 import { getSessionUser } from "@/utils/getSessionUser";
 import { NextResponse, NextRequest } from "next/server";
 import { Types } from "mongoose";
+import { pusherServer } from "@/lib/pusher";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -95,6 +96,15 @@ export const POST = async (request: NextRequest, { params }: Props) => {
       recipient: new Types.ObjectId(recipient),
       text,
       read: false,
+    });
+
+    // 🔔 Emitimos evento en canal dinámico
+    await pusherServer.trigger(`chat-${id}`, "new-message", {
+      _id: message._id,
+      text: message.text,
+      sender,
+      recipient,
+      createdAt: message.createdAt,
     });
 
     return NextResponse.json(message, { status: 201 });
