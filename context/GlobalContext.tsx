@@ -8,6 +8,7 @@ import {
   SetStateAction,
 } from "react";
 import { useSession } from "next-auth/react";
+import Pusher from "pusher-js";
 
 interface GlobalContextType {
   unreadMessages: number;
@@ -19,18 +20,47 @@ const GlobalContext = createContext<GlobalContextType | null>(null);
 
 export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   const [unreadMessages, setUnreadMessages] = useState(0);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const fetchUnread = async () => {
     try {
       const res = await fetch("/api/messages/unread-messages");
       const data = await res.json();
-
       setUnreadMessages(data.count);
     } catch (error) {
       console.error("Error fetching unread messages:", error);
     }
   };
+
+  useEffect(() => {
+    if (!session?.user?.studioId) return;
+
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+    });
+
+    const channelName = `studio-${session.user.studioId}`;
+    const channel = pusher.subscribe(channelName);
+
+    channel.bind("pusher:subscription_succeeded", () => {
+      console.log("✅ Suscrito al canal global:", channelName);
+    });
+
+    channel.bind("pusher:subscription_error", (err: any) => {
+      console.error("❌ Error de suscripción global:", err);
+    });
+
+    channel.bind("new-message", () => {
+      console.log("📩 Nuevo mensaje en el estudio");
+      fetchUnread(); // refresca el contador global
+    });
+
+    return () => {
+      channel.unbind_all();
+      pusher.unsubscribe(channelName);
+      pusher.disconnect();
+    };
+  }, [session?.user?.studioId]);
 
   return (
     <GlobalContext.Provider
@@ -47,10 +77,8 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useGlobalContext = () => {
   const context = useContext(GlobalContext);
-
   if (!context) {
     throw new Error("useGlobalContext must be used inside GlobalProvider");
   }
-
   return context;
 };

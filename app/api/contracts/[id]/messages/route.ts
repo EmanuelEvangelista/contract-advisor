@@ -55,6 +55,7 @@ export const POST = async (request: NextRequest, { params }: Props) => {
   try {
     await connectDB();
     const { id } = await params;
+    console.log("este es el id del back", id);
     const sessionUser = await getSessionUser();
 
     if (
@@ -75,13 +76,8 @@ export const POST = async (request: NextRequest, { params }: Props) => {
     }
 
     const isAccountant = sessionUser.user.role === "accountant";
-
-    // 👇 DEFINIMOS sender y recipient correctamente
     const sender = sessionUser.userId;
-
-    const recipient = isAccountant
-      ? employeeId // accountant responde al empleado
-      : sessionUser.user.studioId; // empleado manda al estudio
+    const recipient = isAccountant ? employeeId : sessionUser.user.studioId;
 
     if (!sender || !recipient) {
       return NextResponse.json(
@@ -98,16 +94,34 @@ export const POST = async (request: NextRequest, { params }: Props) => {
       read: false,
     });
 
-    // 🔔 Emitimos evento en canal dinámico
-    await pusherServer.trigger(`chat-${id}`, "new-message", {
-      _id: message._id,
-      text: message.text,
-      sender,
-      recipient,
-      createdAt: message.createdAt,
-    });
+    const populatedMessage = await message.populate(
+      "sender",
+      "username image email",
+    );
+    // Disparar al canal del contrato
+    await pusherServer.trigger(
+      `chat-${id}`,
+      "new-message",
+      populatedMessage.toObject(),
+    );
 
-    return NextResponse.json(message, { status: 201 });
+    // Disparar también al canal global del estudio
+    await pusherServer.trigger(
+      `studio-${sessionUser.user.studioId}`,
+      "new-message",
+      populatedMessage.toObject(),
+    );
+
+    console.log(
+      "Pusher disparado a:",
+      `chat-${id}`,
+      "y",
+      `studio-${sessionUser.user.studioId}`,
+    );
+
+    console.log("Pusher disparado a:", `chat-${id}`, populatedMessage._id);
+
+    return NextResponse.json(populatedMessage, { status: 201 });
   } catch (error) {
     console.error("Error en POST Message:", error);
     return NextResponse.json(
