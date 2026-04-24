@@ -35,8 +35,16 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!session?.user?.studioId) return;
 
-    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, {
-      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+    const appKey = process.env.NEXT_PUBLIC_PUSHER_APP_KEY;
+    const cluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER;
+
+    if (!appKey || !cluster) {
+      console.error("❌ Pusher env vars missing");
+      return;
+    }
+
+    const pusher = new Pusher(appKey, {
+      cluster,
     });
 
     const channelName = `studio-${session.user.studioId}`;
@@ -46,13 +54,9 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
       console.log("✅ Suscrito al canal global:", channelName);
     });
 
-    channel.bind("pusher:subscription_error", (err: any) => {
-      console.error("❌ Error de suscripción global:", err);
-    });
-
     channel.bind("new-message", () => {
       console.log("📩 Nuevo mensaje en el estudio");
-      fetchUnread(); // refresca el contador global
+      fetchUnread();
     });
 
     return () => {
