@@ -1,0 +1,84 @@
+{
+  "navbar": {
+    "brand_1": "Contract",
+    "brand_2": "Advisor",
+    "panel": "Panel",
+    "profile": "Profile",
+    "contracts": "Contracts",
+    "add_contract": "Add Contract",
+    "your_profile": "Your Profile",
+    "sign_out": "Sign Out",
+    "home": "Home"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "server_error": "There was an error in the communication with the server"
+  },
+  "contracts": {
+    "confirm_delete": "Are you sure you want to delete this contract?",
+    "deleted_success": "Contract deleted successfully",
+    "delete_failed": "Fail to delete contract"
+  },
+  "hero": {
+    "badge": "Agricultural Contract Platform",
+    "headline_1": "Every Agro-Contract.",
+    "headline_2": "Every Detail.",
+    "headline_3": "One Platform.",
+    "description": "ContractAdvisor is a full-featured contract management system built for agricultural studios — with team messaging, role-based access, expiration alerts, and complete staff oversight.",
+    "features": {
+      "dashboard": "Live Dashboard",
+      "dashboard_sub": "Stats at a glance",
+      "chat": "Contract Chat",
+      "chat_sub": "Internal messaging",
+      "alerts": "Expiry Alerts",
+      "alerts_sub": "Email via Resend",
+      "reassignment": "Reassignment",
+      "reassignment_sub": "Flexible team ops",
+      "search": "Search & Pagination",
+      "search_sub": "Find anything fast",
+      "staff": "Staff Control",
+      "staff_sub": "Deactivate, audit-safe"
+    },
+    "roles": {
+      "label": "Roles",
+      "accountant": "Admin / Accountant",
+      "employee": "Employee",
+      "admin": "Admin"
+    },
+    "roles_label": "Roles",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "staff_title": "Staff Management",
+    "chat_title": "Contract Chat",
+    "chat_contract": "Annual Leasing – Diego e Hijos",
+    "chat_meta": "Pedro Garcia · Exp. 16/4/2026",
+    "chat_message_1": "Q1 payment hasn't been registered. Can you check?",
+    "chat_message_2": "On it — I'll update the ledger today.",
+    "chat_placeholder": "Write a message...",
+    "chat_send": "Send",
+    "dashboard_title": "Contracts Dashboard",
+    "stats": {
+      "expiring_soon": "Expiring Soon",
+      "expired": "Expired",
+      "active": "Active"
+    },
+    "contracts": {
+      "parcelary": "Parcelary",
+      "leasing": "Leasing",
+      "active": "Active",
+      "expiring": "Expiring"
+    },
+    "recent_contracts": "Recent Contracts",
+    "view_all": "View all",
+    "alert_message": "Ricardo Garcia's contract expires in 10 days"
+  }
+}

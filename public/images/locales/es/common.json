@@ -1,0 +1,84 @@
+{
+  "navbar": {
+    "brand_1": "Contrato",
+    "brand_2": "Asesor",
+    "panel": "Panel",
+    "profile": "Perfil",
+    "contracts": "Contratos",
+    "add_contract": "Agregar Contrato",
+    "your_profile": "Tu Perfil",
+    "sign_out": "Cerrar Sesión",
+    "home": "Inicio"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "back": "Atrás",
+    "server_error": "Hubo un error en la comunicación con el servidor"
+  },
+  "contracts": {
+    "confirm_delete": "¿Está seguro de que desea eliminar este contrato?",
+    "deleted_success": "Contrato eliminado exitosamente",
+    "delete_failed": "Error al eliminar el contrato"
+  },
+  "hero": {
+    "badge": "Plataforma de Contratos Agrícolas",
+    "headline_1": "Cada Contrato Agrícola.",
+    "headline_2": "Cada Detalle.",
+    "headline_3": "Una Plataforma.",
+    "description": "ContractAdvisor es un sistema completo de gestión de contratos creado para estudios agrícolas — con mensajería en equipo, acceso basado en roles, alertas de vencimiento y supervisión completa del personal.",
+    "features": {
+      "dashboard": "Panel en Vivo",
+      "dashboard_sub": "Estadísticas de un vistazo",
+      "chat": "Chat de Contratos",
+      "chat_sub": "Mensajería interna",
+      "alerts": "Alertas de Vencimiento",
+      "alerts_sub": "Correo vía Resend",
+      "reassignment": "Reasignación",
+      "reassignment_sub": "Operaciones de equipo flexibles",
+      "search": "Búsqueda y Paginación",
+      "search_sub": "Encuentra cualquier cosa rápido",
+      "staff": "Control de Personal",
+      "staff_sub": "Desactivar, seguro para auditoría"
+    },
+    "roles": {
+      "label": "Roles",
+      "accountant": "Admin / Contador",
+      "employee": "Empleado",
+      "admin": "Admin"
+    },
+    "roles_label": "Roles",
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "staff_title": "Gestión de Personal",
+    "chat_title": "Chat de Contratos",
+    "chat_contract": "Arrendamiento Anual – Diego e Hijos",
+    "chat_meta": "Pedro Garcia · Vence 16/4/2026",
+    "chat_message_1": "El pago del Q1 no ha sido registrado. ¿Puedes revisar?",
+    "chat_message_2": "En ello — actualizaré el ledger hoy.",
+    "chat_placeholder": "Escribe un mensaje...",
+    "chat_send": "Enviar",
+    "dashboard_title": "Panel de Contratos",
+    "stats": {
+      "expiring_soon": "Próximos a Vencer",
+      "expired": "Vencidos",
+      "active": "Activos"
+    },
+    "contracts": {
+      "parcelary": "Parcelario",
+      "leasing": "Arrendamiento",
+      "active": "Activo",
+      "expiring": "Próximo a Vencer"
+    },
+    "recent_contracts": "Contratos Recientes",
+    "view_all": "Ver todo",
+    "alert_message": "El contrato de Ricardo Garcia vence en 10 días"
+  }
+}

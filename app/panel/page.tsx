@@ -2,6 +2,8 @@ import UserPanel from "@/components/UserPanel";
 import ContractsState from "@/components/ContractsState";
 import ActionPanel from "@/components/ActionPanel";
 
+export const dynamic = "force-dynamic";
+
 const PanelPage = () => {
   return (
     <main className="min-h-screen bg-slate-50 pb-12 pt-8 px-6 max-w-[1400px] mx-auto">
